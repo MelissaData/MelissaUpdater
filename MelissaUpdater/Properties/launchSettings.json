@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "MelissaUpdater": {
+      "commandName": "Project",
+      "sqlDebugging": false,
+      "nativeDebugging": false
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

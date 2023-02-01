@@ -1,0 +1,279 @@
+﻿# Melissa Updater
+This is a CLI application allowing the user to update their Melissa applications/data.
+
+## Table of Contents
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Verbs](#verbs)
+- [Parameters](#parameters)
+- [Sample Commands](#sample-commands)
+- [Update Schedule](#update-schedule)
+
+----------------------------------------
+
+## Requirements
+- Windows: Windows 10 64-bit or newer
+- Linux: Ubuntu 20.04 LTS
+- Dotnet Core SDK 7.0 or newer
+----------------------------------------
+
+## Getting Started
+This download link will get you a copy of the Melissa Updater to use on your machine. Download Melissa Updater here: 
+- Windows: <https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe>
+- Linux: <https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/latest/MelissaUpdater>
+
+----------------------------------------
+
+## Verbs
+|Verb       |Description              |
+|-----------|-------------------------|
+|file       |Download a single file.  |
+|manifest   |Download all files within a product.|
+|verify     |Verify a file or a folder path.|
+|help       |Display more information on a specific command.|
+|version    |Display version information.|
+
+----------------------------------------
+
+## Parameters
+
+### File
+|Short  |Long                 |Description                    					|
+|-------|---------------------|---------------------------------------------------|
+|-a		|--architecture       |The specific architecture for the binary file (64BIT, 32BIT, ANY).       |
+|-c		|--compiler           |The specific compiler for the binary file (ACC3, ANY, C, COM, DLL, GCC32, GCC34, GCC41, GCC46, GCC48, GCC83, JAVA, MSSQL, NET, PERL, PHP, PHP7, PLSQL, PYTHON, RUBY, SSIS2005, SSIS2008, SSIS2012, SSIS2014, SSIS2016, SSIS2017, SSIS2019, WS12, WS6, XLC12, XLC6).   					|
+|-d		|--dry_run            |Simulate the process without modifying any files.                   	|
+|-f	    |--force              |Force the download and overwrite existing file(s).                 		|
+|-l		|--license            |The valid Melissa license string for the product you wish to download. |
+|-n		|--filename           |The filename to download.                                              |
+|-o		|--os                 |The specific operating system for the binary file (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).            					|
+|-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
+|-t     |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
+|-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.        					|
+|-x     |--callback           |Action command for the next script or process to run.    	|
+|-y     |--type	              |The specific file type to be downloaded (BINARY, DATA, INTERFACE).    	|
+|       |--help	              |Display the help screen.    	|
+|       |--version	          |Display version information.    	|
+
+
+### Manifest
+|Short   |Long                 |Description                    |
+|--------|---------------------|-------------------------------|
+|-d		 |--dry_run            |Simulate the process without modifying any files.|
+|-f	     |--force              |Force the download and overwrite existing file(s).                 		|
+|-l		 |--license            |The valid Melissa license string for the product you wish to download. |
+|-m      |--map                |The map file with your custome file structure for downloaded file(s).|
+|-p      |--product            |The product or manifest name to be downloaded.          |
+|-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
+|-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
+|-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.       					|
+|-x      |--callback           |Action command for the next script or process to run.    	|
+|        |--help	           |Display the help screen.    	|
+|        |--version	           |Display version information.    	|
+
+
+### Verify
+|Short   |Long                 |Description                    |
+|--------|---------------------|-------------------------------|
+|-p	     |--path               |The file or folder path that you wish to verify.                 		|
+|-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-x      |--callback           |Action command for the next script or process to run.    	|
+|        |--help	           |Display the help screen.    	|
+|        |--version	           |Display version information.    	|
+----------------------------------------
+
+## Sample Commands
+### Windows version
+#### File
+* Interface
+    ```
+    .\MelissaUpdater.exe file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" 
+    ```
+    
+    Download to a working directory:
+    ```
+    .\MelissaUpdater.exe file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+    
+* Binary
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "DLL" -a "64BIT" -y "BINARY" -t "C:\YOUR\PATH\TO\DIRECTORY"
+    ```
+
+    Download to a working directory:
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "DLL" -a "64BIT" -y "BINARY" -t  "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+
+* Data
+	
+    For data files, flags for type (-y), operating system (-o), architecture (-a), and compiler (-c) are not mandatory. You can use either of the commands below:
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY"
+    ```
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -y "DATA" -o "ANY" -c "ANY" -a "ANY" -t  "C:\YOUR\PATH\TO\DIRECTORY"
+    ```
+
+    Download to a working directory:
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+    ```
+    .\MelissaUpdater.exe file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -y "DATA" -o "ANY" -c "ANY" -a "ANY" -t  "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+
+
+#### Manifest
+There are 2 ways to use Manifest option:
+* Without Map directory: All files in the product will be downloaded into the same folder.
+
+    ```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l  "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY\ManifestTest"
+    ```
+
+    Download to a working directory:
+    ```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l  "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY\ManifestTest" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+
+* With Map directory: All files in the product will be downloaded into folder/subfolders based on the structure specified in .map files. You can pass in either absolute or relative map file path. Map files structure examples can be found in MelissaUpdater\Maps folder.
+	* Absolute path:
+	```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\dq_phone_data.map" 
+    ```
+
+	* Relative path:
+	```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY" -m ".\Maps\dq_phone_data.map"
+    ```
+
+    * Download to a working directory:
+    ```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\dq_phone_data.map" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+    ```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "C:\YOUR\PATH\TO\DIRECTORY" -m ".\Maps\dq_phone_data.map" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    ```
+
+ #### Verify
+* A folder   
+    ```
+    .\MelissaUpdater.exe verify -p "C:\YOUR\PATH\TO\DIRECTORY"
+    ```
+
+* A specific file   
+    ```
+    .\MelissaUpdater.exe verify -p "C:\YOUR\PATH\TO\DIRECTORY\Filename.txt"
+    ```
+
+
+### Linux version
+#### File
+* Interface
+    ```
+    ./MelissaUpdater file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY" 
+    ```
+    
+    Download to a working directory:
+    ```
+    ./MelissaUpdater file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY" 
+    ```
+    
+
+* Binary
+    ```
+    ./MelissaUpdater file -n "mdPhone.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "DLL" -a "64BIT" -y "BINARY" -t "/YOUR/PATH/TO/DIRECTORY"
+    ```
+
+    Download to a working directory:
+    ```
+    ./MelissaUpdater file -n "mdPhone.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "DLL" -a "64BIT" -y "BINARY" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    ```
+
+* Data
+	
+    For data files, flags for type (-y), operating system (-o), architecture (-a), and compiler (-c) are not mandatory. You can use either of the commands below:
+    ```
+    ./MelissaUpdater file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY"
+    ```
+    ```
+    ./MelissaUpdater file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -y "DATA" -o "ANY" -c "ANY" -a "ANY" -t "/YOUR/PATH/TO/DIRECTORY"
+    ```
+
+    Download to a working directory:
+    ```
+    ./MelissaUpdater file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    ```
+    ```
+    ./MelissaUpdater file -n "mdPhone.dat" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -y "DATA" -o "ANY" -c "ANY" -a "ANY" -t  "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    ```
+
+
+#### Manifest
+There are 2 ways to use Manifest option:
+* Without Map directory: 
+
+    All files in the product will be downloaded into the same folder.
+
+    ```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY"
+    ```
+    Download to a working directory:
+    ```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    ```
+
+* With Map directory: All files in the product will be downloaded into folder/subfolders based on the structure specified in .map files. You can pass in either absolute or relative map file path. Map files structure examples can be found MelissaUpdater/Maps folder.
+	* Absolute path:
+	```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -m "/YOUR/PATH/TO/MAP/DIRECTORY/Maps/Melissa_product_name.map"
+    ```
+
+	* Relative path:
+	```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -m "./Maps/Melissa_product_name.map"
+    ```
+    * Download to a working directory:
+    ```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -m "/YOUR/PATH/TO/MAP/DIRECTORY/Maps/Melissa_product_name.map" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    ```
+    ```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -m "./Maps/Melissa_product_name.map" -w "/YOUR/PATH/TO/DIRECTORY/WORKING/DIRECTORY"
+    ```
+#### Verify
+* A folder   
+    ```
+    ./MelissaUpdater verify -p "/YOUR/PATH/TO/DIRECTORY"
+    ```
+
+* A specific file   
+    ```
+    ./MelissaUpdater verify -p "/YOUR/PATH/TO/DIRECTORY/Filename.txt"
+    ```
+
+
+----------------------------------------
+
+## Update Schedule
+|Monthly |Bimonthly |Quarterly|
+|--------|----------|---------|
+|01	     |B6	    |Q1       |
+|02	     |B1	    |Q1       |
+|03	     |B1	    |Q1       |
+|04	     |B2	    |Q2       |
+|05	     |B2	    |Q2       |
+|06	     |B3	    |Q2       |
+|07	     |B3	    |Q3       |
+|08	     |B4	    |Q3       |
+|09	     |B4	    |Q3       |
+|10	     |B5	    |Q4       |
+|11	     |B5	    |Q4       |
+|12	     |B6	    |Q4       |
+
+
+
+
+
