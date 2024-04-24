@@ -12,6 +12,7 @@ namespace MelissaUpdater.Classes
     public string LicenseString { get; set; }
     public string TargetDirectory { get; set; }
     public string WorkingDirectory { get; set; }
+    public bool Index { get; set; }
     public bool Force { get; set; }
     public bool DryRun { get; set; }
     public bool Quiet { get; set; }
@@ -32,7 +33,8 @@ namespace MelissaUpdater.Classes
       SetWorkingDirectory(opts.WorkingDirectory);
       SetForce(opts.Force);
       SetDryRun(opts.DryRun);
-      SetQuiet(opts.Quiet);
+			SetQuiet(opts.Quiet);
+      SetIndex(opts.Index);
       SetMap(opts.Map);
       SetProcessCallBack(opts.ProcessCallBack);
 
@@ -68,7 +70,7 @@ namespace MelissaUpdater.Classes
       }
       if (string.IsNullOrWhiteSpace(LicenseString))
       {
-        Console.WriteLine("License String is invalid");
+        Console.WriteLine("License String cannot be empty. Check again or contact your sale representative for support.");
         throw new Exception();
       }
     }
@@ -118,9 +120,14 @@ namespace MelissaUpdater.Classes
       DryRun = dryrun;
     }
 
-    void SetQuiet(bool quiet)
+		void SetQuiet(bool quiet)
     {
       Quiet = quiet;
+    }
+
+    void SetIndex(bool index)
+    {
+      Index = index;
     }
 
     void SetMap(string mapFromOpts)

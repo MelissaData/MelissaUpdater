@@ -2,6 +2,7 @@
   "profiles": {
     "MelissaUpdater": {
       "commandName": "Project",
+      "commandLineArgs": "",
       "sqlDebugging": false,
       "nativeDebugging": false
     },

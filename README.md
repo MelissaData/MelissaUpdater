@@ -1,5 +1,9 @@
-﻿# Melissa Updater
-This is a CLI application allowing the user to update their Melissa applications/data.
+# Melissa Updater
+This is a CLI application allowing the user to update their Melissa applications/data utilizing the Melissa Releases API.
+
+For more information on the Melissa Releases API, please see: <https://docs.melissa.com/cloud-api/melissa-releases/melissa-releases-index.html>
+
+For more information on the Melissa Updater, please see: <https://docs.melissa.com/software/melissa-updater/melissa-updater-index.html>
 
 ## Table of Contents
 - [Requirements](#requirements)
@@ -12,9 +16,9 @@ This is a CLI application allowing the user to update their Melissa applications
 ----------------------------------------
 
 ## Requirements
-- Windows: Windows 10 64-bit or newer
-- Linux: Ubuntu 20.04 LTS
-- Dotnet Core SDK 7.0 or newer
+- Windows: Windows 11 64-bit or newer
+- Linux: Ubuntu 22.04 LTS
+- Dotnet Core SDK 8.0 or newer
 ----------------------------------------
 
 ## Getting Started
@@ -38,38 +42,44 @@ This download link will get you a copy of the Melissa Updater to use on your mac
 ## Parameters
 
 ### File
-|Short  |Long                 |Description                    					|
-|-------|---------------------|---------------------------------------------------|
+|Short   |Long                 |Description                    |
+|--------|---------------------|-------------------------------|
 |-a		|--architecture       |The specific architecture for the binary file (64BIT, 32BIT, ANY).       |
-|-c		|--compiler           |The specific compiler for the binary file (ACC3, ANY, C, COM, DLL, GCC32, GCC34, GCC41, GCC46, GCC48, GCC83, JAVA, MSSQL, NET, PERL, PHP, PHP7, PLSQL, PYTHON, RUBY, SSIS2005, SSIS2008, SSIS2012, SSIS2014, SSIS2016, SSIS2017, SSIS2019, WS12, WS6, XLC12, XLC6).   					|
+|-c		|--compiler           |The specific compiler for the binary file <br>(ACC3, ANY, C, COM, DLL, GCC32, GCC34, GCC41, GCC46, GCC48, GCC83,<br> JAVA, MSSQL, NET, PERL, PHP, PHP7, PLSQL, PYTHON, RUBY,<br> SSIS2005, SSIS2008, SSIS2012, SSIS2014, SSIS2016, SSIS2017, SSIS2019, WS12, WS6, XLC12, XLC6).   					|
 |-d		|--dry_run            |Simulate the process without modifying any files.                   	|
 |-f	    |--force              |Force the download and overwrite existing file(s).                 		|
 |-l		|--license            |The valid Melissa license string for the product you wish to download. |
 |-n		|--filename           |The filename to download.                                              |
-|-o		|--os                 |The specific operating system for the binary file (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).            					|
+|-o		|--os                 |The specific operating system for the binary file<br> (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).            					|
 |-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
 |-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
-|-t     |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
+|-t     |--target_directory   |The target directory where to place the downloaded file(s).<br> If not specified, the default is the current directory. 					|
 |-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.        					|
-|-x     |--callback           |Action command for the next script or process to run.    	|
+|-x     |--callback           |Action command for the next script or process to run (Windows only).    	|
 |-y     |--type	              |The specific file type to be downloaded (BINARY, DATA, INTERFACE).    	|
 |       |--help	              |Display the help screen.    	|
 |       |--version	          |Display version information.    	|
 
 
 ### Manifest
+
+You can retrieve a list of available manifest names using the Melissa Releases API: <https://releases.melissadata.net/ManifestList/YYYY.MM>
+
+Alternatively, you can view it in a browser: <https://releases.melissadata.net/Browse>
+
 |Short   |Long                 |Description                    |
 |--------|---------------------|-------------------------------|
 |-d		 |--dry_run            |Simulate the process without modifying any files.|
 |-f	     |--force              |Force the download and overwrite existing file(s).                 		|
+|-i	     |--index              |Retrieve and list all files in a manifest.                 		|
 |-l		 |--license            |The valid Melissa license string for the product you wish to download. |
-|-m      |--map                |The map file with your custome file structure for downloaded file(s).|
+|-m      |--map                |The map file with your custom file structure for downloaded file(s).|
 |-p      |--product            |The product or manifest name to be downloaded.          |
 |-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
 |-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
 |-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
 |-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.       					|
-|-x      |--callback           |Action command for the next script or process to run.    	|
+|-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
 |        |--help	           |Display the help screen.    	|
 |        |--version	           |Display version information.    	|
 
@@ -79,7 +89,7 @@ This download link will get you a copy of the Melissa Updater to use on your mac
 |--------|---------------------|-------------------------------|
 |-p	     |--path               |The file or folder path that you wish to verify.                 		|
 |-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-x      |--callback           |Action command for the next script or process to run.    	|
+|-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
 |        |--help	           |Display the help screen.    	|
 |        |--version	           |Display version information.    	|
 ----------------------------------------
@@ -89,12 +99,12 @@ This download link will get you a copy of the Melissa Updater to use on your mac
 #### File
 * Interface
     ```
-    .\MelissaUpdater.exe file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" 
+    .\MelissaUpdater.exe file -n "mdPhone_cSharpCode.cs" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "ANY" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" 
     ```
     
     Download to a working directory:
     ```
-    .\MelissaUpdater.exe file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
+    .\MelissaUpdater.exe file -n "mdPhone_cSharpCode.cs" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "ANY" -c "NET" -a "ANY" -y "INTERFACE" -t "C:\YOUR\PATH\TO\DIRECTORY" -w "C:\YOUR\PATH\TO\WORKING\DIRECTORY"
     ```
     
 * Binary
@@ -174,12 +184,12 @@ There are 2 ways to use Manifest option:
 #### File
 * Interface
     ```
-    ./MelissaUpdater file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY" 
+    ./MelissaUpdater file -n "mdPhone_cSharpCode.cs" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "ANY" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY"  
     ```
     
     Download to a working directory:
     ```
-    ./MelissaUpdater file -n "mdPhoneNET.dll" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "WINDOWS" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY" 
+    ./MelissaUpdater file -n "mdPhone_cSharpCode.cs" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -o "ANY" -c "NET" -a "ANY" -y "INTERFACE" -t "/YOUR/PATH/TO/DIRECTORY" -w "/YOUR/PATH/TO/WORKING/DIRECTORY" 
     ```
     
 

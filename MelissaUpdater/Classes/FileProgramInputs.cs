@@ -63,12 +63,16 @@ namespace MelissaUpdater.Classes
       }
       try
       {
-        Type = typeString;
-      }
+        if (typeString != "DATA" && typeString != "BINARY" && typeString != "INTERFACE")
+        {
+          throw new InvalidManifestTypeException(typeString);
+        }
+				else Type = typeString;
+			}
       catch (InvalidManifestTypeException e)
       {
-        Console.WriteLine($"{e.Value} is not a valid file type");
-        throw;
+        Console.WriteLine($"'{e.Value}' is not a valid file type");
+        throw new InvalidArgumentException(e.Value);
       }
     }
 
@@ -138,7 +142,7 @@ namespace MelissaUpdater.Classes
       }
       if (string.IsNullOrWhiteSpace(LicenseString))
       {
-        Console.WriteLine("License String is invalid");
+        Console.WriteLine("License String cannot be empty.\nCheck again or contact your sales representative for support.");
         throw new Exception();
       }
     }

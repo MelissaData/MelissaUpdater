@@ -3,10 +3,10 @@ stages:
   
 buildJob:
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: mcr.microsoft.com/dotnet/sdk:8.0
   
   script:
-    - dotnet publish  -f="net7.0" -r win10-x64 /p:PublishSingleFile=true -c Release -o Artifacts MelissaUpdater/MelissaUpdater.csproj
+    - dotnet publish  -f="net8.0" -r win-x64 /p:PublishSingleFile=true -c Release -o Artifacts MelissaUpdater/MelissaUpdater.csproj
 
   artifacts:
     paths:

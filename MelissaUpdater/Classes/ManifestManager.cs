@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MelissaUpdater.Exceptions;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace MelissaUpdater.Classes
 {
@@ -71,9 +74,20 @@ namespace MelissaUpdater.Classes
 
       HttpResponseMessage response = await Client.GetAsync(url);
 
-      string text = await response.Content.ReadAsStringAsync();
+      string responseString = await response.Content.ReadAsStringAsync();
 
-      string[] urls = text.Split('\n');
+	  if (response.StatusCode != HttpStatusCode.OK)
+	  {
+        string invalidType = "";
+        if (!String.IsNullOrEmpty(responseString))
+        {
+            Response responseInfo = JsonConvert.DeserializeObject<Response>(responseString);
+            invalidType = responseInfo.type;
+        }       
+	   	throw new InvalidArgumentException(invalidType, Inputs.ReleaseVersion);
+	  }
+
+	  string[] urls = responseString.Split('\n');
 
       List<Task<(int, string)>> hashPromises = new List<Task<(int, string)>>();
 
@@ -110,6 +124,10 @@ namespace MelissaUpdater.Classes
     /// <returns></returns>
     public async Task<bool> DetermineRequiredUpdates()
     {
+      if (Inputs.Index)
+      {
+        return false;
+      }
       sw.Restart();
       Utilities.Log($"Determining what to update for {Inputs.Product} for {Inputs.ReleaseVersion}", Inputs.Quiet);
 
@@ -119,6 +137,10 @@ namespace MelissaUpdater.Classes
         try
         {
           string hash;
+          if (!File.Exists(path))
+          {
+            continue;
+          }
           if (File.Exists(path + ".hash"))
           {
             hash = await File.ReadAllTextAsync(path + ".hash");
@@ -241,14 +263,18 @@ namespace MelissaUpdater.Classes
       // find path for specified .map file
       if (mapFilePath.StartsWith("."))    // relative path
       {
-        string basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        mapPath = Path.Combine(basePath, mapFilePath);
+        string basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
+        mapPath = Path.GetFullPath(Path.Combine(basePath, mapFilePath));
       }
       else      // resticted path
       {
         mapPath = mapFilePath;
       }
 
+      if (!File.Exists(mapPath))
+      {
+        throw new InvalidArgumentException("invalidMapMissing", mapPath);
+      }
       string[] content = await File.ReadAllLinesAsync(mapPath);
 
       List<ManifestMapRow> manifestMapRows = new List<ManifestMapRow>();
@@ -319,9 +345,17 @@ namespace MelissaUpdater.Classes
             }
           ).ToList();
       }
-      Utilities.Log("Finished gathering filepath data \n", Inputs.Quiet);
 
       ManifestFiles = joinedManifests;
+      for (int i = 0; i < ManifestFiles.Count; i++)
+      {
+          if (ManifestFiles[i].FilePath == null)
+          {
+              throw new InvalidArgumentException("invalidMap", mapPath);
+          }
+      }
+
+      Utilities.Log("Finished gathering filepath data \n", Inputs.Quiet);
     }
 
     /// <summary>
@@ -534,6 +568,7 @@ namespace MelissaUpdater.Classes
       {
         Utilities.Log(ManifestFiles[i].FileName, Inputs.Quiet);
       }
+      Utilities.Log("", Inputs.Quiet);
     }
 
   }

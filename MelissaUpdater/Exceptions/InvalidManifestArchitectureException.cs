@@ -4,13 +4,13 @@ using System.Text;
 
 namespace MelissaUpdater.Exceptions
 {
-    class InvalidManifestArchitectureException : Exception
+  class InvalidManifestArchitectureException : Exception
+  {
+    public string Value { get; set; }
+    public InvalidManifestArchitectureException () { }
+    public InvalidManifestArchitectureException (string value)
     {
-        public string Value { get; set; }
-        public InvalidManifestArchitectureException () { }
-        public InvalidManifestArchitectureException (string value)
-        {
-            Value = value;
-        }
+      Value = value;
     }
+  }
 }

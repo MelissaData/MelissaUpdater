@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MelissaUpdater.Exceptions;
 
 namespace MelissaUpdater.Classes
 {
@@ -75,8 +76,8 @@ namespace MelissaUpdater.Classes
       if (!CheckDownloadUrl(url))
       {
         shouldContinue = false;
-        Console.WriteLine($"{Inputs.LicenseString} is an invalid License String!");
-        throw new Exception("Cannot continue downloading due to invalid license string!");
+        //Console.WriteLine($"{Inputs.LicenseString} is an invalid License String!");
+        throw new InvalidArgumentException("invalidLicense", Inputs.ReleaseVersion);
       }
       else
       {
@@ -377,10 +378,24 @@ namespace MelissaUpdater.Classes
       };
 
       HttpResponseMessage response = await Client.GetAsync(url);
-
       var responseString = await response.Content.ReadAsStringAsync();
-      SingleFileMetaData metadata = JsonConvert.DeserializeObject<SingleFileMetaData>(responseString);
-      return metadata;
+
+      if (response.StatusCode == HttpStatusCode.OK)
+      {
+        SingleFileMetaData metadata = JsonConvert.DeserializeObject<SingleFileMetaData>(responseString);
+        return metadata;
+      }
+      else
+      {
+        string invalidType = "";
+        if (!String.IsNullOrEmpty(responseString))
+        {
+            Response responseInfo = JsonConvert.DeserializeObject<Response>(responseString);
+            invalidType = responseInfo.type;
+        }
+        throw new InvalidArgumentException(invalidType, file.Release);
+      }
+      
     }
 
   }

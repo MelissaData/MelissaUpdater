@@ -118,8 +118,13 @@ namespace MelissaUpdater.Classes
 
     public static void LogError(string s, bool quiet)
     {
-      if (!quiet)
+      if (s.Contains("thrown"))
       {
+        return;
+      }
+      else if (!quiet)
+      {
+        Console.WriteLine();
         Console.Error.WriteLine(s);
       }
     }

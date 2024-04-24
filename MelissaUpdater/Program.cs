@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using MelissaUpdater.Classes;
 using MelissaUpdater.Config;
+using MelissaUpdater.Exceptions;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
@@ -30,13 +31,13 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.ToString()}", opts.Quiet);
-          Utilities.Log("Unable to start program, please check above for details.\n", opts.Quiet);
+          Utilities.LogError($"\n{ex.ToString()}", opts.Quiet);
+          Utilities.Log("\nUnable to start program, please check above for details.", opts.Quiet);
           Environment.Exit(1); 
           return;
         }
         try
-        {
+        {                                                                                    
           // Get manifest files for product
           manager.GetManifestContents().Wait();
 
@@ -81,7 +82,14 @@ namespace MelissaUpdater
               manager.DetermineRequiredUpdates().Wait();
               manager.ListManifestFiles();
             }
-            if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result)
+            // Check if Index is enable, display files list without downloading
+            if (manager.Inputs.Index)
+            {
+              Utilities.Log($"Available file(s) in '{manager.Inputs.Product}' manifest:", manager.Inputs.Quiet);
+              manager.ListManifestFiles();
+            }
+
+            if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result && !manager.Inputs.Index)
             {
               manager.Download().Wait();
             }
@@ -99,8 +107,17 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.Message}", opts.Quiet);
+          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          {
+	          Utilities.LogError(ex.InnerException.Message, opts.Quiet);
+          }
+          else
+          {
+	          Utilities.Log($"\n{ex.ToString()}", opts.Quiet);
+          }
+          Utilities.Log("\nUnable to start program, please check above for details.", opts.Quiet);
           Environment.Exit(1);
+          return;
         }
 
         Utilities.Log($"Ending Program @[{DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt")}]\n", opts.Quiet);
@@ -122,7 +139,21 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.ToString()}", opts.Quiet);
+          if(ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          {
+            Utilities.LogError(ex.InnerException.Message, opts.Quiet);
+          }
+          else
+          {
+            if (ex.InnerException != null)
+            {
+							Utilities.LogError($"\n{ex.InnerException.Message}", opts.Quiet);
+						}
+            else
+            {
+							Utilities.LogError($"\n{ex.Message}", opts.Quiet);
+						}
+          }
           Utilities.Log("\nUnable to start program, please check above for details.", opts.Quiet);
           Environment.Exit(1);
           return;
@@ -137,15 +168,18 @@ namespace MelissaUpdater
             {
               if (manager.CheckIfExistsInWorkingDirectory().Result)
               {
-                manager.CleanUpTargetDirectory();
-                manager.Update();
+								manager.CleanUpTargetDirectory();
+								manager.Update();           
               }
               else
               {
                 manager.Download().Wait();
-                manager.CleanUpTargetDirectory();
-                manager.Update();
-              }
+								if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
+								{
+									manager.CleanUpTargetDirectory();
+									manager.Update();
+								}
+							}
             }
           }
           else
@@ -175,9 +209,18 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.Message}", opts.Quiet);
-          Environment.Exit(1);
-        }
+					if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+					{
+						Utilities.LogError(ex.InnerException.Message, opts.Quiet);
+					}
+					else
+					{
+						Utilities.LogError($"\n{ex.ToString()}", opts.Quiet);
+					}
+					Utilities.Log("\nUnable to start program, please check above for details.", opts.Quiet);
+					Environment.Exit(1);
+					return;
+				}
 
         Utilities.Log($"Ending Program @[{DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt")}]\n", opts.Quiet);
 
@@ -198,7 +241,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.ToString()}", opts.Quiet);
+          Utilities.LogError($"{ex.ToString()}", opts.Quiet);
           Utilities.Log("\nUnable to start program, please check above for details.", opts.Quiet);
           Environment.Exit(1);
           return;
@@ -219,7 +262,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          Utilities.Log($"\n{ex.Message}", opts.Quiet);
+          Utilities.LogError($"{ex.Message}", opts.Quiet);
           Environment.Exit(1);
         }
 
