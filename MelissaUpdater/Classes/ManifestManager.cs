@@ -147,8 +147,15 @@ namespace MelissaUpdater.Classes
           }
           else
           {
-            await Utilities.CreateOrUpdateHashFile(path);
-            hash = await File.ReadAllTextAsync(path + ".hash");
+            if (Inputs.DryRun)
+            {
+              hash = Utilities.GetHashSha256(path);
+            }
+            else
+            {
+              await Utilities.CreateOrUpdateHashFile(path);
+              hash = await File.ReadAllTextAsync(path + ".hash");
+            }
           }
 
           if (string.IsNullOrEmpty(hash) || string.IsNullOrWhiteSpace(hash))
@@ -197,8 +204,15 @@ namespace MelissaUpdater.Classes
             }
             else
             {
-              await Utilities.CreateOrUpdateHashFile(path);
-              hash = await File.ReadAllTextAsync(path + ".hash");
+              if(Inputs.DryRun)
+              {
+                hash = Utilities.GetHashSha256(path);
+              }
+              else
+              {
+                await Utilities.CreateOrUpdateHashFile(path);
+                hash = await File.ReadAllTextAsync(path + ".hash");
+              }
             }
 
             if (hash.Equals(ManifestFiles[i].SHA256))
@@ -206,7 +220,8 @@ namespace MelissaUpdater.Classes
               ManifestFiles.RemoveAt(i);
               count--;
             }
-            else
+
+            else if (!Inputs.DryRun)
             {
               File.Move(path, $"{path}_OUT_OF_DATE");
               File.Move(path + ".hash", $"{path}_OUT_OF_DATE.hash");
@@ -429,13 +444,19 @@ namespace MelissaUpdater.Classes
     public void Update()
     {
       sw.Restart();
-      Utilities.Log($"Updating {ManifestFilesToUpdate.Count} file(s) for {Inputs.Product} for {Inputs.ReleaseVersion}", Inputs.Quiet);
+
+      // Update all files if Force mode
+      List<ManifestFile> ManifestFilesToUpdateInTargetDir = Inputs.Force
+        ? ManifestFiles
+        : ManifestFilesToUpdate;
+
+      Utilities.Log($"Updating {ManifestFilesToUpdateInTargetDir.Count} file(s) for {Inputs.Product} for {Inputs.ReleaseVersion}", Inputs.Quiet);
 
       string workingDirectory = string.IsNullOrWhiteSpace(Inputs.WorkingDirectory)
           ? Inputs.TargetDirectory
           : Inputs.WorkingDirectory;
 
-      ManifestFilesToUpdate.ForEach(manifestFile =>
+      ManifestFilesToUpdateInTargetDir.ForEach(manifestFile =>
       {
         string from = Path.Combine(workingDirectory, manifestFile.FilePath);
         string to = Path.Combine(Inputs.TargetDirectory, manifestFile.FilePath);
@@ -483,7 +504,12 @@ namespace MelissaUpdater.Classes
     {
       Utilities.Log("Cleaning up target directory", Inputs.Quiet);
 
-      ManifestFilesToUpdate.ForEach(manifestFile =>
+      // Clean up all files if Force mode
+      List<ManifestFile> ManifestFilesToClean = Inputs.Force
+        ? ManifestFiles
+        : ManifestFilesToUpdate;
+
+      ManifestFilesToClean.ForEach(manifestFile =>
       {
         string path = Path.Combine(Inputs.TargetDirectory, manifestFile.FilePath);
         int attempts = 0;

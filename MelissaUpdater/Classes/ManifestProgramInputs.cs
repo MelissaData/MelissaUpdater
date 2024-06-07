@@ -37,7 +37,7 @@ namespace MelissaUpdater.Classes
       SetIndex(opts.Index);
       SetMap(opts.Map);
       SetProcessCallBack(opts.ProcessCallBack);
-
+      CheckForConflictFlags();
     }
 
     void SetProduct(string productFromOpts)
@@ -118,7 +118,7 @@ namespace MelissaUpdater.Classes
     void SetDryRun(bool dryrun)
     {
       DryRun = dryrun;
-    }
+		}
 
 		void SetQuiet(bool quiet)
     {
@@ -128,7 +128,7 @@ namespace MelissaUpdater.Classes
     void SetIndex(bool index)
     {
       Index = index;
-    }
+		}
 
     void SetMap(string mapFromOpts)
     {
@@ -144,6 +144,28 @@ namespace MelissaUpdater.Classes
       if (!string.IsNullOrEmpty(processCallBack))
       {
         ProcessCallBack = processCallBack;
+      }
+    }
+    void CheckForConflictFlags()
+    {
+      bool conflict = false;
+      // Check for conflict flags
+      if (DryRun && Force)
+      {
+        Utilities.LogError("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
+        conflict = true;
+      }
+      else if (Quiet && Index)
+      {
+        Utilities.LogError("Quiet Mode and Index Mode cannot be chosen at the same time. Please try again.", false);
+        conflict = true;
+      }
+
+			if (conflict)
+      {
+        Utilities.Log("\nUnable to start program, please check above for details.", false);
+        Environment.Exit(1);
+        return;
       }
     }
 

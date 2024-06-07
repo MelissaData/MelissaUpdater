@@ -42,6 +42,7 @@ namespace MelissaUpdater.Classes
       SetDryRun(opts.DryRun);
       SetQuiet(opts.Quiet);
       SetProcessCallBack(opts.ProcessCallBack);
+      CheckForConflictFlags();
     }
 
     void SetFileName(string fileNameFromOpts)
@@ -203,6 +204,25 @@ namespace MelissaUpdater.Classes
       if (!string.IsNullOrEmpty(processCallBack))
       {
         ProcessCallBack = processCallBack;
+      }
+    }
+
+    void CheckForConflictFlags()
+    {
+      bool conflict = false;
+
+      // Check for conflict flags
+      if (DryRun && Force)
+      {
+        Utilities.LogError("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
+        conflict = true;
+      }
+
+      if (conflict)
+      {
+        Utilities.Log("\nUnable to start program, please check above for details.", false);
+        Environment.Exit(1);
+        return;
       }
     }
   }

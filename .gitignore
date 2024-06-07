@@ -14,7 +14,7 @@
 *.userprefs
 
 # Build results
-/launchsettings.json
+launchSettings.*
 /TestScripts/
 [Dd]ebug/
 [Dd]ebugPublic/

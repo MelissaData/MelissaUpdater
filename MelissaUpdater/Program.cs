@@ -51,21 +51,57 @@ namespace MelissaUpdater
             manager.JoinFilePathsNoMapFile().Wait();
           }
 
-          // Check for Working Directory to download to a staging directory before moving to the Target Directory
-          if (!string.IsNullOrWhiteSpace(manager.Inputs.WorkingDirectory))
+          // Check if Index is enabled, if so display files list without downloading
+          if (manager.Inputs.Index)
           {
-            if (manager.DetermineRequiredUpdates().Result)
+            Utilities.Log($"Available file(s) in '{manager.Inputs.Product}' manifest:", manager.Inputs.Quiet);
+            manager.ListManifestFiles();
+
+            // Print warning message if Force or Dry Run is also enabled
+            if (manager.Inputs.Force || manager.Inputs.DryRun)
             {
-              if (manager.CheckIfExistsInWorkingDirectory().Result)
+              string conflictMode = manager.Inputs.Force ? "Force Mode" : "Dry Run Mode";
+              Utilities.LogError($"!Warning! Please perform {conflictMode} in a separate action.\n", false);
+						}
+          }
+
+          // Check for Working Directory to download to a staging directory before moving to the Target Directory
+          else if (!string.IsNullOrWhiteSpace(manager.Inputs.WorkingDirectory))
+          {
+            if (manager.Inputs.Force)
+            {
+              manager.Download().Wait();
+              if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
               {
                 manager.CleanUpTargetDirectory();
                 manager.Update();
               }
+            }
+            else if (manager.Inputs.DryRun)
+            {
+              if (manager.DetermineRequiredUpdates().Result)
+              {
+                manager.CheckIfExistsInWorkingDirectory().Wait();
+              }
+            }
+            else if (manager.DetermineRequiredUpdates().Result)
+            {
+              if (manager.CheckIfExistsInWorkingDirectory().Result)
+              {
+                if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
+                {
+                  manager.CleanUpTargetDirectory();
+                  manager.Update();
+                }
+              }
               else
               {
                 manager.Download().Wait();
-                manager.CleanUpTargetDirectory();
-                manager.Update();
+                if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
+                {
+                  manager.CleanUpTargetDirectory();
+                  manager.Update();
+                }
               }
             }
           }
@@ -76,20 +112,14 @@ namespace MelissaUpdater
             {
               manager.Download().Wait();
             }
-            // Check if Dry Run is enable, and complete every steps without actually downloading
-            if (manager.Inputs.DryRun)
+						// Check if Dry Run is enable, and complete every steps without actually downloading
+						else if (manager.Inputs.DryRun)
             {
               manager.DetermineRequiredUpdates().Wait();
               manager.ListManifestFiles();
             }
-            // Check if Index is enable, display files list without downloading
-            if (manager.Inputs.Index)
-            {
-              Utilities.Log($"Available file(s) in '{manager.Inputs.Product}' manifest:", manager.Inputs.Quiet);
-              manager.ListManifestFiles();
-            }
 
-            if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result && !manager.Inputs.Index)
+            else if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result)
             {
               manager.Download().Wait();
             }
@@ -164,22 +194,41 @@ namespace MelissaUpdater
           manager.JoinFilePath();
           if (!string.IsNullOrWhiteSpace(manager.Inputs.WorkingDirectory))
           {
-            if (manager.DetermineRequiredUpdates().Result)
+            if (manager.Inputs.Force)
             {
-              if (manager.CheckIfExistsInWorkingDirectory().Result)
+              manager.Download().Wait();
+              if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
               {
-								manager.CleanUpTargetDirectory();
-								manager.Update();           
+                manager.CleanUpTargetDirectory();
+                manager.Update();
               }
-              else
+            }
+            else if (manager.Inputs.DryRun)
+            {
+              if (manager.DetermineRequiredUpdates().Result)
               {
-                manager.Download().Wait();
-								if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
-								{
-									manager.CleanUpTargetDirectory();
-									manager.Update();
-								}
-							}
+                manager.CheckIfExistsInWorkingDirectory().Wait();
+              }              
+            }
+            else
+            {
+              if (manager.DetermineRequiredUpdates().Result)
+              {
+                if (manager.CheckIfExistsInWorkingDirectory().Result)
+                {
+                  manager.CleanUpTargetDirectory();
+                  manager.Update();
+                }
+                else
+                {
+                  manager.Download().Wait();
+                  if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
+                  {
+                    manager.CleanUpTargetDirectory();
+                    manager.Update();
+                  }
+                }
+              }
             }
           }
           else
@@ -188,7 +237,7 @@ namespace MelissaUpdater
             {
               manager.Download().Wait();
             }
-            if (manager.Inputs.DryRun)
+            else if (manager.Inputs.DryRun)
             {
               manager.DetermineRequiredUpdates().Wait();
             }

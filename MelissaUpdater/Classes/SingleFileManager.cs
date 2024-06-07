@@ -169,8 +169,15 @@ namespace MelissaUpdater.Classes
         }
         else
         {
-          await Utilities.CreateOrUpdateHashFile(path);
-          SingleFile.SHA256 = await File.ReadAllTextAsync(path + ".hash");
+          if (Inputs.DryRun)
+          {
+            SingleFile.SHA256 = Utilities.GetHashSha256(path);
+          }
+          else
+          {
+            await Utilities.CreateOrUpdateHashFile(path);
+            SingleFile.SHA256 = await File.ReadAllTextAsync(path + ".hash");
+          }
         }
 
         if (hash.Equals(SingleFile.SHA256))
@@ -179,7 +186,7 @@ namespace MelissaUpdater.Classes
           return true;
         }
 
-        else
+        else if (!Inputs.DryRun)
         {
           File.Move(path, $"{path}_OUT_OF_DATE");
           File.Move(path + ".hash", $"{path}_OUT_OF_DATE.hash");
@@ -225,9 +232,16 @@ namespace MelissaUpdater.Classes
         }
         else
         {
-          await Utilities.CreateOrUpdateHashFile(path);
+          if(Inputs.DryRun)
+          {
+            SingleFile.SHA256 = Utilities.GetHashSha256(path);
+          }
+          else
+          {
+            await Utilities.CreateOrUpdateHashFile(path);
 
-          SingleFile.SHA256 = await File.ReadAllTextAsync(path + ".hash");
+            SingleFile.SHA256 = await File.ReadAllTextAsync(path + ".hash");
+          }
         }
 
         string hash = await GetHash();
