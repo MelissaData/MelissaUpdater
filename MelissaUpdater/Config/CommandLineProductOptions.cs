@@ -5,8 +5,8 @@ using CommandLine;
 
 namespace MelissaUpdater.Config
 {
-  [Verb("manifest", HelpText = "Download all files within a product.")]
-  class ManifestOptions
+  [Verb("product", HelpText = "Download all files within a product.")]
+  class ProductOptions
   {
     [Option('d', "dry_run", HelpText = "Simulate the process without modifying any files.")]
     public bool DryRun { get; set; }
@@ -14,16 +14,10 @@ namespace MelissaUpdater.Config
     [Option('f', "force", HelpText = "Force the download and overwrite existing file(s).")]
     public bool Force { get; set; }
 
-    [Option('i', "index", HelpText = "Retrieve and list all files in a manifest.")]
-    public bool Index { get; set; }
-
     [Option('l', "license", HelpText = "The valid Melissa license string for the product you wish to download.")]
     public string License { get; set; }
 
-    [Option('m', "map", HelpText = "The map file with your custome file structure for downloaded file(s).")]
-    public string Map { get; set; }
-
-    [Option('p', "product", HelpText = "The manifest name to be downloaded.")]
+    [Option('p', "product", HelpText = "The product name to be downloaded.")]
     public string Product { get; set; }
 
     [Option('q', "quiet", HelpText = "Run the program in quiet mode without console output except for errors.")]
@@ -40,8 +34,6 @@ namespace MelissaUpdater.Config
 
     [Option('x', "callback", HelpText = "Action command for the next script or process to run.")]
     public string ProcessCallBack { get; set; }
-
-
   }
 }
 

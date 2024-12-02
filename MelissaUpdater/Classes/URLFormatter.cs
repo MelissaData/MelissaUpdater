@@ -36,27 +36,34 @@ namespace MelissaUpdater.Classes
     private static readonly string manifestHashInterfaceScaffolding =
         "https://releases.melissadata.net/sha256/Interface/{0}/{1}/{2}/{3}/{4}?id={5}";
 
-    /// <summary>
-    /// Get the url to retrieve all files in a manifest
-    /// </summary>
-    /// <param name="releaseVersion"></param>
-    /// <param name="product"></param>
-    /// <param name="licenseString"></param>
-    /// <returns></returns>
-    public static string FormatManifestContentsUrl(string releaseVersion, string product, string licenseString)
-    {
-      string release = string.IsNullOrWhiteSpace(releaseVersion) ? "latest" : releaseVersion;
+	public static readonly string productDownloadScaffolding =
+            "https://releases.melissadata.net/Download/Product/{0}/{1}?id={2}";
+    public static readonly string productMetaScaffolding =
+        "https://releases.melissadata.net/metadata/Product/{0}/{1}?id={2}";
+    private static readonly string productHashScaffolding =
+        "https://releases.melissadata.net/sha256/PRODUCT/{0}/{1}?id={2}";
 
-      return string.Format(manifestContentScaffolding, release, product, HttpUtility.UrlEncode(licenseString));
+	/// <summary>
+	/// Get the url to retrieve all files in a manifest
+	/// </summary>
+	/// <param name="releaseVersion"></param>
+	/// <param name="product"></param>
+	/// <param name="licenseString"></param>
+	/// <returns></returns>
+	public static string FormatManifestContentsUrl(string releaseVersion, string product, string licenseString)
+    {
+    string release = string.IsNullOrWhiteSpace(releaseVersion) ? "latest" : releaseVersion;
+
+    return string.Format(manifestContentScaffolding, release, product, HttpUtility.UrlEncode(licenseString));
     }
 
-    /// <summary>
-    /// Get the url to download a data file
-    /// </summary>
-    /// <param name="manifestFile"></param>
-    /// <param name="licenseString"></param>
-    /// <returns></returns>
-    public static string FormatDataDownloadUrl(IFile manifestFile, string licenseString)
+	/// <summary>
+	/// Get the url to download a data file
+	/// </summary>
+	/// <param name="manifestFile"></param>
+	/// <param name="licenseString"></param>
+	/// <returns></returns>
+	public static string FormatDataDownloadUrl(IFile manifestFile, string licenseString)
     {
       return string.Format(
           manifestDownloadDataScaffolding,
@@ -105,6 +112,22 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
+    /// Get the url to download the product file
+    /// </summary>
+    /// <param name="productFile"></param>
+    /// <param name="licenseString"></param>
+    /// <returns></returns>
+    public static string FormatProductDownloadUrl(ProductFile productFile, string licenseString)
+    {
+      return string.Format(
+          productDownloadScaffolding,
+          productFile.Release,
+          productFile.FileName,
+          HttpUtility.UrlEncode(licenseString)
+      );
+    }
+
+    /// <summary>
     /// Get the url to get the hash of a single data file
     /// </summary>
     /// <param name="singleFile"></param>
@@ -134,6 +157,38 @@ namespace MelissaUpdater.Classes
           manifestFile.FileName,
           HttpUtility.UrlEncode(licenseString)
       );
+    }
+
+	/// <summary>
+	/// Get the url to get the hash of the product file
+	/// </summary>
+	/// <param name="productFile"></param>
+	/// <param name="licenseString"></param>
+	/// <returns></returns>
+	public static string FormatProductUrl(ProductFile productFile, string licenseString)
+	{
+		return string.Format(
+				productHashScaffolding,
+				productFile.Release,
+				productFile.FileName,
+				HttpUtility.UrlEncode(licenseString)
+		);
+	}
+
+    /// <summary>
+    /// Get the url to get the metadata of the product file
+    /// </summary>
+    /// <param name="productFile"></param>
+    /// <param name="licenseString"></param>
+    /// <returns></returns>
+    public static string FormatMetaDataUrl(ProductFile productFile, string licenseString)
+    {
+        return string.Format(
+            productMetaScaffolding,
+            productFile.Release,
+            productFile.FileName,
+            HttpUtility.UrlEncode(licenseString)
+        );
     }
 
     /// <summary>
@@ -190,13 +245,13 @@ namespace MelissaUpdater.Classes
       );
     }
 
-    /// <summary>
-    /// Get the url to get the metadata of a single library file
-    /// </summary>
-    /// <param name="singleFile"></param>
-    /// <param name="licenseString"></param>
-    /// <returns></returns>
-    public static string FormatMetaLibraryUrl(SingleFile singleFile, string licenseString)
+	/// <summary>
+	/// Get the url to get the metadata of a single library file
+	/// </summary>
+	/// <param name="singleFile"></param>
+	/// <param name="licenseString"></param>
+	/// <returns></returns>
+	public static string FormatMetaLibraryUrl(SingleFile singleFile, string licenseString)
     {
       return string.Format(
           fileMetaLibraryScaffolding,
@@ -247,13 +302,13 @@ namespace MelissaUpdater.Classes
       );
     }
 
-    /// <summary>
-    /// Get the url to get the metadata of a single interface file
-    /// </summary>
-    /// <param name="singleFile"></param>
-    /// <param name="licenseString"></param>
-    /// <returns></returns>
-    public static string FormatMetaInterfaceUrl(SingleFile singleFile, string licenseString)
+	/// <summary>
+	/// Get the url to get the metadata of a single interface file
+	/// </summary>
+	/// <param name="singleFile"></param>
+	/// <param name="licenseString"></param>
+	/// <returns></returns>
+	public static string FormatMetaInterfaceUrl(SingleFile singleFile, string licenseString)
     {
       return string.Format(
           fileMetaInterfaceScaffolding,
