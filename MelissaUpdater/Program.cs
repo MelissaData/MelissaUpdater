@@ -4,7 +4,6 @@ using MelissaUpdater.Config;
 using MelissaUpdater.Exceptions;
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace MelissaUpdater
 {
@@ -21,6 +20,8 @@ namespace MelissaUpdater
       // Download a product
       static void RunProductOptions(ProductOptions opts)
       {
+        Utilities.CheckForMelissaUpdaterUpdates(opts.Quiet).Wait();
+
         ProductManager manager;
 
         Stopwatch sw = Stopwatch.StartNew();
@@ -32,7 +33,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }
@@ -59,6 +60,7 @@ namespace MelissaUpdater
           {
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
               if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
               {
@@ -70,7 +72,10 @@ namespace MelissaUpdater
             {
               if (manager.DetermineRequiredUpdates().Result)
               {
-                manager.CheckIfExistsInWorkingDirectory().Wait();
+                if (!manager.CheckIfExistsInWorkingDirectory().Result)
+                {
+                  manager.DisplayTotalFileSize();
+                }
               }
             }
             else
@@ -84,6 +89,7 @@ namespace MelissaUpdater
                 }
                 else
                 {
+                  manager.DisplayTotalFileSize();
                   manager.Download().Wait();
                   if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
                   {
@@ -98,14 +104,19 @@ namespace MelissaUpdater
           {
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
             else if (manager.Inputs.DryRun)
             {
-              manager.DetermineRequiredUpdates().Wait();
+              if (manager.DetermineRequiredUpdates().Result)
+              {
+                manager.DisplayTotalFileSize();
+              }
             }
             else if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
           }
@@ -121,7 +132,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }
@@ -142,6 +153,8 @@ namespace MelissaUpdater
       // Download a manifest of files
       static void RunManifestOptions(ManifestOptions opts)
       {
+        Utilities.CheckForMelissaUpdaterUpdates(opts.Quiet).Wait();
+
         ManifestManager manager;
         Stopwatch sw = Stopwatch.StartNew();
 
@@ -192,6 +205,7 @@ namespace MelissaUpdater
           {
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
               if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
               {
@@ -203,7 +217,10 @@ namespace MelissaUpdater
             {
               if (manager.DetermineRequiredUpdates().Result)
               {
-                manager.CheckIfExistsInWorkingDirectory().Wait();
+                if (!manager.CheckIfExistsInWorkingDirectory().Result)
+                {
+                  manager.DisplayTotalFileSize();
+                }
               }
             }
             else if (manager.DetermineRequiredUpdates().Result)
@@ -218,6 +235,7 @@ namespace MelissaUpdater
               }
               else
               {
+                manager.DisplayTotalFileSize();
                 manager.Download().Wait();
                 if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
                 {
@@ -232,17 +250,22 @@ namespace MelissaUpdater
             // Check if Force download is enabled, and download the accordingly version, if not, download the latest version
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
             // Check if Dry Run is enable, and complete every steps without actually downloading
             else if (manager.Inputs.DryRun)
             {
-              manager.DetermineRequiredUpdates().Wait();
-              manager.ListManifestFiles();
+              if (manager.DetermineRequiredUpdates().Result)
+              {
+                manager.DisplayTotalFileSize();
+              }
+              //manager.ListManifestFiles();
             }
 
             else if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
           }
@@ -259,7 +282,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }
@@ -280,6 +303,8 @@ namespace MelissaUpdater
       // Download a single file
       static void RunFileOptions(FileOptions opts)
       {
+        Utilities.CheckForMelissaUpdaterUpdates(opts.Quiet).Wait();
+
         SingleFileManager manager;
 
         Stopwatch sw = Stopwatch.StartNew();
@@ -291,7 +316,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }
@@ -318,6 +343,7 @@ namespace MelissaUpdater
           {
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
               if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
               {
@@ -329,7 +355,10 @@ namespace MelissaUpdater
             {
               if (manager.DetermineRequiredUpdates().Result)
               {
-                manager.CheckIfExistsInWorkingDirectory().Wait();
+                if (!manager.CheckIfExistsInWorkingDirectory().Result)
+                {
+                  manager.DisplayTotalFileSize();
+                }
               }
             }
             else
@@ -343,6 +372,7 @@ namespace MelissaUpdater
                 }
                 else
                 {
+                  manager.DisplayTotalFileSize();
                   manager.Download().Wait();
                   if (manager.Inputs.WorkingDirectory != manager.Inputs.TargetDirectory)
                   {
@@ -357,14 +387,19 @@ namespace MelissaUpdater
           {
             if (manager.Inputs.Force)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
             else if (manager.Inputs.DryRun)
             {
-              manager.DetermineRequiredUpdates().Wait();
+              if (manager.DetermineRequiredUpdates().Result)
+              {
+                manager.DisplayTotalFileSize();
+              }
             }
             else if (!manager.Inputs.DryRun && manager.DetermineRequiredUpdates().Result)
             {
+              manager.DisplayTotalFileSize();
               manager.Download().Wait();
             }
           }
@@ -380,7 +415,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && ex.InnerException is InvalidArgumentException)
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }
@@ -401,6 +436,8 @@ namespace MelissaUpdater
       // Verify hash(es) of a file or a folder path
       static void RunVerifyOptions(VerifyOptions opts)
       {
+        Utilities.CheckForMelissaUpdaterUpdates(opts.Quiet).Wait();
+
         VerifyManager manager;
 
         Stopwatch sw = Stopwatch.StartNew();

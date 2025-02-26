@@ -76,8 +76,6 @@ namespace MelissaUpdater.Classes
       if (!CheckDownloadUrl(url))
       {
         shouldContinue = false;
-        //Console.WriteLine($"{Inputs.LicenseString} is an invalid License String!");
-        throw new InvalidArgumentException("invalidLicense", Inputs.ReleaseVersion);
       }
       else
       {
@@ -102,7 +100,7 @@ namespace MelissaUpdater.Classes
         {
           Utilities.Log($"Downloading {SingleFile.FileName} for {SingleFile.Release}", Inputs.Quiet);
           client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
-            DownloadProgressStatus(progressPercentage);
+            Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
           };
           await client.StartDownload();
         }
@@ -116,25 +114,20 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Displays the operation identifier, and the transfer progress.
-    /// </summary>
-    /// <param name="progressPercentage"></param>
-    private void DownloadProgressStatus(double? progressPercentage)
-    {
-      Utilities.LogErrorWithoutNewLine($"\r {progressPercentage,3} % complete...", Inputs.Quiet);
-    }
-
-    /// <summary>
-    /// Check if the url to download the file is valid
+    /// Check if the url to download the file is valid.
+    /// Throws an exception if not.
     /// </summary>
     /// <param name="url"></param>
-    /// <returns></returns>
     private bool CheckDownloadUrl(string url)
     {
       Utilities.Log($"Checking url for {SingleFile.FileName} for {SingleFile.Release}", Inputs.Quiet);
       HttpClient client = new HttpClient();
       var response = client.GetAsync($"{url}", HttpCompletionOption.ResponseHeadersRead).Result;
-      return (response.StatusCode == HttpStatusCode.OK);
+      if (response.StatusCode != HttpStatusCode.OK)
+      {
+        throw new InvalidResponseException(response.StatusCode, response.ReasonPhrase);
+      }
+      return response.StatusCode == HttpStatusCode.OK;
     }
 
     /// <summary>
@@ -410,6 +403,14 @@ namespace MelissaUpdater.Classes
         throw new InvalidArgumentException(invalidType, file.Release);
       }
       
+    }
+
+    /// <summary>
+    /// Displays the total file size of the single file
+    /// </summary>
+    public void DisplayTotalFileSize()
+    {
+      Utilities.DisplayTotalFileSize(SingleFileMetaData.FileSize, Inputs.Quiet);
     }
 
   }

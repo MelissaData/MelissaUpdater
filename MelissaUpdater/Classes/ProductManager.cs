@@ -5,10 +5,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using MelissaUpdater.Exceptions;
 using Newtonsoft.Json;
 using System.Net;
@@ -70,7 +66,6 @@ namespace MelissaUpdater.Classes
       if (!CheckDownloadUrl(url))
       {
         shouldContinue = false;
-        throw new InvalidArgumentException("invalidLicense", Inputs.ReleaseVersion);
       }
       else
       {
@@ -95,7 +90,7 @@ namespace MelissaUpdater.Classes
         {
           Utilities.Log($"Downloading {ProductFile.FileName} for {ProductFile.Release}", Inputs.Quiet);
           client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
-            DownloadProgressStatus(progressPercentage);
+            Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
           };
           await client.StartDownload();
         }
@@ -109,15 +104,6 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Displays the operation identifier, and the transfer progress.
-    /// </summary>
-    /// <param name="progressPercentage"></param>
-    private void DownloadProgressStatus(double? progressPercentage)
-    {
-      Utilities.LogErrorWithoutNewLine($"\r {progressPercentage,3} % complete...", Inputs.Quiet);
-    }
-
-    /// <summary>
     /// Check if the url to download the file is valid
     /// </summary>
     /// <param name="url"></param>
@@ -127,6 +113,10 @@ namespace MelissaUpdater.Classes
       Utilities.Log($"Checking url for {ProductFile.FileName} for {ProductFile.Release}", Inputs.Quiet);
       HttpClient client = new HttpClient();
       var response = client.GetAsync($"{url}", HttpCompletionOption.ResponseHeadersRead).Result;
+      if (response.StatusCode != HttpStatusCode.OK)
+      {
+        throw new InvalidResponseException(response.StatusCode, response.ReasonPhrase);
+      }
       return (response.StatusCode == HttpStatusCode.OK);
     }
 
@@ -391,5 +381,12 @@ namespace MelissaUpdater.Classes
 
     }
 
+    /// <summary>
+    /// Displays the total file size of the product
+    /// </summary>
+    public void DisplayTotalFileSize()
+    {
+      Utilities.DisplayTotalFileSize(ProductFileMetaData.FileSize, Inputs.Quiet);
+    }
   }
 }

@@ -18,5 +18,6 @@ namespace MelissaUpdater.Models
     public string FilePath { get; set; }
     public string Release { get; set; }
     public string SHA256 { get; set; }
+    public string FileSize { get; set; }
   }
 }

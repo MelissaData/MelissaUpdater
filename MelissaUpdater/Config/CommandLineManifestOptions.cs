@@ -20,7 +20,7 @@ namespace MelissaUpdater.Config
     [Option('l', "license", HelpText = "The valid Melissa license string for the product you wish to download.")]
     public string License { get; set; }
 
-    [Option('m', "map", HelpText = "The map file with your custome file structure for downloaded file(s).")]
+    [Option('m', "map", HelpText = "The map file with your custom file structure for downloaded file(s).")]
     public string Map { get; set; }
 
     [Option('p', "product", HelpText = "The manifest name to be downloaded.")]

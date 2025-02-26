@@ -6,15 +6,18 @@ using System.Text;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
-using MelissaUpdater.Models;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using ByteSizeLib;
 
 namespace MelissaUpdater.Classes
 {
   class Utilities
   {
     private static readonly SHA256 Sha256 = SHA256.Create();
+    private static readonly HttpClient Client = new HttpClient();
 
     /// <summary>
     /// Calculate hash
@@ -23,7 +26,7 @@ namespace MelissaUpdater.Classes
     /// <returns></returns>
     public static string GetHashSha256(string filename)
     {
-      using FileStream stream = File.OpenRead(filename);
+      using FileStream stream = System.IO.File.OpenRead(filename);
       byte[] bytes = Sha256.ComputeHash(stream);
       StringBuilder builder = new StringBuilder(bytes.Length * 2);
       for (int i = 0; i < bytes.Length; i++)
@@ -172,5 +175,91 @@ namespace MelissaUpdater.Classes
 
     }
 
+    /// <summary>
+    /// Check for any updates to the Melissa Updater.
+    /// Displays information if there is a newer version.
+    /// </summary>
+    /// <returns>Whether or not it was successfully checked.</returns>
+    public static async Task<bool> CheckForMelissaUpdaterUpdates(bool quiet)
+    {
+      string url;
+
+      if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        url = "https://releases.melissadata.net/Metadata/Library/LINUX/NET/ANY/latest/MelissaUpdater";
+      }
+      else
+      {
+        url = "https://releases.melissadata.net/Metadata/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe";
+      }
+
+      Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+      bool success = true;
+
+      try
+      {
+        HttpResponseMessage response = await Client.GetAsync(url);
+
+        string responseString = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+          var responseInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+          Version latestVersion = new Version(responseInfo["BuildNumber"]);
+
+          if (currentVersion < latestVersion)
+          {
+            Log($"A newer version of the Melissa Updater is now available!", quiet);
+            Log($"{currentVersion} -> {latestVersion}", quiet);
+            Log($"Download:      {url}", quiet);
+            Log($"Release Notes: https://releasenotes.melissa.com/software/melissa-updater/", quiet);
+            Log($"GitHub:        https://github.com/MelissaData/MelissaUpdater", quiet);
+          }
+        }
+        else
+        {
+          success = false;
+        }
+      } catch
+      {
+        success = false;
+      }
+
+      return success;
+    }
+
+    /// <summary>
+    /// Displays the download progress for a file
+    /// </summary>
+    /// <param name="totalFileSize"></param>
+    /// <param name="totalBytesDownloaded"></param>
+    /// <param name="progressPercentage"></param>
+    /// <param name="quiet"></param>
+    public static void DownloadProgressStatus(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage, bool quiet)
+    {
+      string totalBytesDownloadedReadable = ByteSize.FromBytes(Convert.ToDouble(totalBytesDownloaded)).ToString("#.00");
+      string totalFileSizeReadable = ByteSize.FromBytes(Convert.ToDouble(totalFileSize)).ToString("#.00");
+      Utilities.LogErrorWithoutNewLine($"\r [ {totalBytesDownloadedReadable,9} / {totalFileSizeReadable,9} ] {progressPercentage,3} % complete...", quiet);
+    }
+
+    /// <summary>
+    /// Displays the total file size to be updated
+    /// </summary>
+    /// <param name="totalFileSize"></param>
+    /// <param name="quiet"></param>
+    public static void DisplayTotalFileSize(long totalFileSize, bool quiet)
+    {
+      Utilities.Log($"Total size of update: {ByteSize.FromBytes(Convert.ToDouble(totalFileSize)).ToString("#.00")}\n", quiet);
+    }
+
+    /// <summary>
+    /// Displays the total file size to be updated
+    /// </summary>
+    /// <param name="totalFileSize"></param>
+    /// <param name="quiet"></param>
+    public static void DisplayTotalFileSize(string totalFileSize, bool quiet)
+    {
+      Utilities.Log($"Total size of update: {ByteSize.FromBytes(Convert.ToDouble(totalFileSize)).ToString("#.00")}\n", quiet);
+    }
   }
 }

@@ -5,7 +5,7 @@ using CommandLine;
 
 namespace MelissaUpdater.Config
 {
-  [Verb("product", HelpText = "Download all files within a product.")]
+  [Verb("product", HelpText = "Download a ZIP file of a specific product.")]
   class ProductOptions
   {
     [Option('d', "dry_run", HelpText = "Simulate the process without modifying any files.")]

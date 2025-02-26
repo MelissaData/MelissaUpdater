@@ -38,6 +38,9 @@ namespace MelissaUpdater.Exceptions
         case "invalidLicense":
           message = "License String is invalid.\nCheck again or contact your sale representative for support.";
           break;
+        case "expiredLicense":
+          message = "License String is expired.\nCheck again or contact your sale representative for support.";
+          break;
         case "invalidManifest":
           message = "Manifest Name is invalid.\nCheck again or visit https://releasenotes.melissa.com/ for more info.";
           break;

@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using MelissaUpdater.Exceptions;
 using Newtonsoft.Json;
 using System.Net;
@@ -36,12 +34,12 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Get hash for a file in manifest
+    /// Get hash and file size for a file in manifest
     /// </summary>
     /// <param name="index"></param>
     /// <param name="manifestFile"></param>
     /// <returns></returns>
-    private async Task<(int, string)> GetHash(int index, ManifestFile manifestFile)
+    private async Task<(int, string, string)> GetHashAndFileSize(int index, ManifestFile manifestFile)
     {
       string url = manifestFile.Type.ToUpper() switch
       {
@@ -53,9 +51,13 @@ namespace MelissaUpdater.Classes
 
       HttpResponseMessage response = await Client.GetAsync(url);
 
-      string hash = await response.Content.ReadAsStringAsync();
+      string responseString = await response.Content.ReadAsStringAsync();
 
-      return (index, hash);
+      var responseInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+      string hash = responseInfo["SHA256"];
+      string fileSize = responseInfo["FileSize"];
+
+      return (index, hash, fileSize);
     }
 
     /// <summary>
@@ -76,18 +78,18 @@ namespace MelissaUpdater.Classes
 
       string responseString = await response.Content.ReadAsStringAsync();
 
-	  if (response.StatusCode != HttpStatusCode.OK)
-	  {
-        string invalidType = "";
-        if (!String.IsNullOrEmpty(responseString))
-        {
-            Response responseInfo = JsonConvert.DeserializeObject<Response>(responseString);
-            invalidType = responseInfo.type;
-        }       
-	   	throw new InvalidArgumentException(invalidType, Inputs.ReleaseVersion);
-	  }
+	    if (response.StatusCode != HttpStatusCode.OK)
+	    {
+          string invalidType = "";
+          if (!String.IsNullOrEmpty(responseString))
+          {
+              Response responseInfo = JsonConvert.DeserializeObject<Response>(responseString);
+              invalidType = responseInfo.type;
+          }       
+	   	  throw new InvalidArgumentException(invalidType, Inputs.ReleaseVersion);
+	    }
 
-	  string[] urls = responseString.Split('\n');
+	    string[] urls = responseString.Split('\n');
 
       List<Task<(int, string)>> hashPromises = new List<Task<(int, string)>>();
 
@@ -95,10 +97,14 @@ namespace MelissaUpdater.Classes
       {
         ManifestFile manifestFile = ParseManifestUrlSegment(urls[i]);
 
-        manifestFiles.Add(manifestFile);
-
         int index = i;
-        hashPromises.Add(Task.Run(async () => await GetHash(index, manifestFile)));
+        hashPromises.Add(Task.Run(async () => {
+            var hashAndFileSize = await GetHashAndFileSize(index, manifestFile);
+            manifestFile.FileSize = hashAndFileSize.Item3;
+            return (hashAndFileSize.Item1, hashAndFileSize.Item2);
+          }));
+
+        manifestFiles.Add(manifestFile);
       }
 
       Task<(int, string)[]> getHashes = Task.WhenAll(hashPromises);
@@ -331,6 +337,7 @@ namespace MelissaUpdater.Classes
             Architecture = file.manifestFile.Architecture,
             Release = file.manifestFile.Release,
             SHA256 = file.manifestFile.SHA256,
+            FileSize = file.manifestFile.FileSize,
             FilePath = maprow == null ? file.manifestFile.FilePath : maprow.FilePath
           }
         ).ToList();
@@ -356,6 +363,7 @@ namespace MelissaUpdater.Classes
               Architecture = maprow.Architecture,
               Release = file.manifestFile.Release,
               SHA256 = file.manifestFile.SHA256,
+              FileSize = file.manifestFile.FileSize,
               FilePath = maprow == null ? "" : maprow.FilePath
             }
           ).ToList();
@@ -420,22 +428,13 @@ namespace MelissaUpdater.Classes
         string progress = $"{count}/{total}";
         Utilities.Log($"Downloaded [{progress,7}] | Working on {manifestFile.FileName}", Inputs.Quiet);
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
-          DownloadProgressStatus(progressPercentage);
+          Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
         };
         await client.StartDownload();
       }
 
       Utilities.Log("", Inputs.Quiet);
       await Utilities.CreateOrUpdateHashFile(path, manifestFile.FileName, manifestFile.SHA256, Inputs.Quiet);
-    }
-
-    /// <summary>
-    /// Displays the operation identifier, and the transfer progress.
-    /// </summary>
-    /// <param name="progressPercentage"></param>
-    private void DownloadProgressStatus(double? progressPercentage)
-    {
-      Utilities.LogErrorWithoutNewLine($"\r {progressPercentage,3} % complete...", Inputs.Quiet);
     }
 
     /// <summary>
@@ -595,6 +594,19 @@ namespace MelissaUpdater.Classes
         Utilities.Log(ManifestFiles[i].FileName, Inputs.Quiet);
       }
       Utilities.Log("", Inputs.Quiet);
+    }
+
+    /// <summary>
+    /// Displays the total combined size of all files within the manifest.
+    /// </summary>
+    public void DisplayTotalFileSize()
+    {
+      long totalDownloadSize = 0;
+      for (int i = 0; i < ManifestFiles.Count; i++)
+      {
+        totalDownloadSize += Convert.ToInt64(ManifestFiles[i].FileSize);
+      }
+      Utilities.DisplayTotalFileSize(totalDownloadSize, Inputs.Quiet);
     }
 
   }

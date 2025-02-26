@@ -4,14 +4,15 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <Version>8.0.2.0</Version>
-    <AssemblyVersion>8.0.2.0</AssemblyVersion>
-    <FileVersion>8.0.2.0</FileVersion>
+    <Version>8.0.3.1</Version>
+    <AssemblyVersion>8.0.3.1</AssemblyVersion>
+    <FileVersion>8.0.3.1</FileVersion>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ByteSize" Version="2.1.2" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />

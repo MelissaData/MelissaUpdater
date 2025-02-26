@@ -29,14 +29,15 @@ namespace MelissaUpdater.Classes
 
     private static readonly string manifestContentScaffolding =
         "https://releases.melissadata.net/Manifest/{0}/{1}/?id={2}&format=lfList";
-    private static readonly string manifestHashDataScaffolding =
-        "https://releases.melissadata.net/sha256/Data/{0}/{1}/?id={2}";
-    private static readonly string manifestHashLibraryScaffolding =
-        "https://releases.melissadata.net/sha256/Library/{0}/{1}/{2}/{3}/{4}/?id={5}";
-    private static readonly string manifestHashInterfaceScaffolding =
-        "https://releases.melissadata.net/sha256/Interface/{0}/{1}/{2}/{3}/{4}?id={5}";
 
-	public static readonly string productDownloadScaffolding =
+    private static readonly string manifestMetaDataScaffolding =
+        "https://releases.melissadata.net/metadata/Data/{0}/{1}/?id={2}";
+    private static readonly string manifestMetaLibraryScaffolding =
+        "https://releases.melissadata.net/metadata/Library/{0}/{1}/{2}/{3}/{4}/?id={5}";
+    private static readonly string manifestMetaInterfaceScaffolding =
+        "https://releases.melissadata.net/metadata/Interface/{0}/{1}/{2}/{3}/{4}?id={5}";
+
+    public static readonly string productDownloadScaffolding =
             "https://releases.melissadata.net/Download/Product/{0}/{1}?id={2}";
     public static readonly string productMetaScaffolding =
         "https://releases.melissadata.net/metadata/Product/{0}/{1}?id={2}";
@@ -144,7 +145,7 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Get the url to get the hash of a data file in the manifest
+    /// Get the url to get the metadata of a data file in the manifest
     /// </summary>
     /// <param name="manifestFile"></param>
     /// <param name="licenseString"></param>
@@ -152,7 +153,7 @@ namespace MelissaUpdater.Classes
     public static string FormatDataUrl(ManifestFile manifestFile, string licenseString)
     {
       return string.Format(
-          manifestHashDataScaffolding,
+          manifestMetaDataScaffolding,
           manifestFile.Release,
           manifestFile.FileName,
           HttpUtility.UrlEncode(licenseString)
@@ -227,7 +228,7 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Get the url to get the hash of a library file in the manifest
+    /// Get the url to get the metadata of a library file in the manifest
     /// </summary>
     /// <param name="manifestFile"></param>
     /// <param name="licenseString"></param>
@@ -235,7 +236,7 @@ namespace MelissaUpdater.Classes
     public static string FormatLibraryUrl(ManifestFile manifestFile, string licenseString)
     {
       return string.Format(
-          manifestHashLibraryScaffolding,
+          manifestMetaLibraryScaffolding,
           manifestFile.OS,
           manifestFile.Compiler,
           manifestFile.Architecture,
@@ -284,7 +285,7 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Get the url to get the hash of an interface file in the manifest
+    /// Get the url to get the metadata of an interface file in the manifest
     /// </summary>
     /// <param name="manifestFile"></param>
     /// <param name="licenseString"></param>
@@ -292,7 +293,7 @@ namespace MelissaUpdater.Classes
     public static string FormatInterfaceUrl(ManifestFile manifestFile, string licenseString)
     {
       return string.Format(
-          manifestHashInterfaceScaffolding,
+          manifestMetaInterfaceScaffolding,
           manifestFile.OS,
           manifestFile.Compiler,
           manifestFile.Architecture,
