@@ -174,7 +174,7 @@ namespace MelissaUpdater.Classes
         }
         catch (Exception ex) 
         {
-          Console.WriteLine(ex.Message);
+          Utilities.Log(ex.Message, false);
         }
       }
 
@@ -242,7 +242,7 @@ namespace MelissaUpdater.Classes
               }
               catch (Exception e)
               {
-                Console.WriteLine($"Unable to delete files: {e.Message}.\n");
+                Utilities.Log($"Unable to delete files: {e.Message}.\n", false);
               }
             }
           }
@@ -417,6 +417,7 @@ namespace MelissaUpdater.Classes
     {
 
       string path = Path.Combine(destinationBase, manifestFile.FilePath);
+      string hash = string.Empty;
 
       if (!Directory.Exists(Path.GetDirectoryName(path)))
       {
@@ -430,11 +431,11 @@ namespace MelissaUpdater.Classes
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
           Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
         };
-        await client.StartDownload();
+        hash = await client.StartDownload();
       }
 
       Utilities.Log("", Inputs.Quiet);
-      await Utilities.CreateOrUpdateHashFile(path, manifestFile.FileName, manifestFile.SHA256, Inputs.Quiet);
+      await Utilities.CreateOrUpdateHashFile(path, manifestFile.FileName, manifestFile.SHA256, hash, Inputs.Quiet);
     }
 
     /// <summary>
@@ -477,16 +478,16 @@ namespace MelissaUpdater.Classes
           }
           catch (IOException ex)
           {
-            Console.WriteLine(ex.Message);
+            Utilities.Log(ex.Message, false);
             if (attempts == 3)
             {
-              Console.WriteLine("Maximum number of attempts made.");
-              Console.WriteLine("Please close the associated file and restart this program.");
-              Console.WriteLine("This program will pick up where it left off.");
+              Utilities.Log("Maximum number of attempts made.", false);
+              Utilities.Log("Please close the associated file and restart this program.", false);
+              Utilities.Log("This program will pick up where it left off.", false);
             }
             else
             {
-              Console.WriteLine($"[{attempts}] Please close the file and press any key to proceed");
+              Utilities.Log($"[{attempts}] Please close the file and press any key to proceed", false);
               Console.ReadKey(false);
             }
           }
@@ -527,16 +528,16 @@ namespace MelissaUpdater.Classes
           }
           catch (IOException ex)
           {
-            Console.WriteLine(ex.Message);
+            Utilities.Log(ex.Message, false);
             if (attempts == 3)
             {
-              Console.WriteLine("Maximum number of attempts made.");
-              Console.WriteLine("Please close the associated file and restart this program.");
-              Console.WriteLine("This program will pick up where it left off.");
+              Utilities.Log("Maximum number of attempts made.", false);
+              Utilities.Log("Please close the associated file and restart this program.", false);
+              Utilities.Log("This program will pick up where it left off.", false);
             }
             else
             {
-              Console.WriteLine($"[{attempts}] Please close the file and press any key to proceed");
+              Utilities.Log($"[{attempts}] Please close the file and press any key to proceed", false);
               Console.ReadKey(false);
             }
           }

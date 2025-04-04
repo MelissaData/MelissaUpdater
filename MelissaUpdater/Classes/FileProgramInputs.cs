@@ -72,7 +72,7 @@ namespace MelissaUpdater.Classes
 			}
       catch (InvalidManifestTypeException e)
       {
-        Console.WriteLine($"'{e.Value}' is not a valid file type");
+        Utilities.Log($"'{e.Value}' is not a valid file type", false);
         throw new InvalidArgumentException(e.Value);
       }
     }
@@ -90,7 +90,7 @@ namespace MelissaUpdater.Classes
       }
       catch (InvalidManifestOperatingSystemException e)
       {
-        Console.WriteLine($"{e.Value} is not a valid operating system");
+        Utilities.Log($"{e.Value} is not a valid operating system", false);
         throw;
       }
     }
@@ -108,7 +108,7 @@ namespace MelissaUpdater.Classes
       }
       catch (InvalidManifestCompilerException e)
       {
-        Console.WriteLine($"{e.Value} is not a valid compiler");
+        Utilities.Log($"{e.Value} is not a valid compiler", false);
         throw;
       }
     }
@@ -126,7 +126,7 @@ namespace MelissaUpdater.Classes
       }
       catch (InvalidManifestArchitectureException e)
       {
-        Console.WriteLine($"{e.Value} is not a valid architecture");
+        Utilities.Log($"{e.Value} is not a valid architecture", false);
         throw;
       }
     }
@@ -143,7 +143,7 @@ namespace MelissaUpdater.Classes
       }
       if (string.IsNullOrWhiteSpace(LicenseString))
       {
-        Console.WriteLine("License String cannot be empty.\nCheck again or contact your sales representative for support.");
+        Utilities.Log("License String cannot be empty.\nCheck again or contact your sales representative for support.", false);
         throw new Exception();
       }
     }
@@ -214,7 +214,7 @@ namespace MelissaUpdater.Classes
       // Check for conflict flags
       if (DryRun && Force)
       {
-        Utilities.LogError("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
+        Utilities.Log("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
         conflict = true;
       }
 

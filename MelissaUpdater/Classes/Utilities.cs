@@ -42,10 +42,11 @@ namespace MelissaUpdater.Classes
     /// </summary>
     /// <param name="file"></param>
     /// <param name="fileName"></param>
-    /// <param name="SHA256"></param>
+    /// <param name="SHA256">Hash 1</param>
+    /// <param name="hash">Hash 2</param>
     /// <param name="quiet"></param>
     /// <returns></returns>
-    public static async Task CreateOrUpdateHashFile(string file, string fileName, string SHA256, bool quiet)
+    public static async Task CreateOrUpdateHashFile(string file, string fileName, string SHA256, string hash, bool quiet)
     {
       Directory.CreateDirectory(Path.GetDirectoryName(file));
 
@@ -55,9 +56,8 @@ namespace MelissaUpdater.Classes
       {
         fs.SetLength(0);
       }
-      //calculating SHA256 hash of <file name>: 
-      LogWithoutNewLine($"Calculating SHA256 of {fileName}: ", quiet);
-      string hash = GetHashSha256(file);
+
+      LogWithoutNewLine($"Verifying SHA256 of {fileName}: ", quiet);
       Log(hash, quiet);
 
       if (hash.Equals(SHA256))
@@ -68,7 +68,7 @@ namespace MelissaUpdater.Classes
       }
       else
       {
-        Console.WriteLine("Hashes not match. An error occured while downloading!");
+        Utilities.Log("Hashes not match. An error occured while downloading!", false);
       }
     }
 
@@ -118,8 +118,7 @@ namespace MelissaUpdater.Classes
         Console.Write(s);
       }
     }
-
-    public static void LogError(string s, bool quiet)
+    public static void LogError(string s, bool quiet=false)
     {
       if (s.Contains("thrown"))
       {
@@ -127,13 +126,16 @@ namespace MelissaUpdater.Classes
       }
       else if (!quiet)
       {
-        Console.WriteLine();
-        Console.Error.WriteLine(s);
+        Console.WriteLine(s);
       }
     }
 
-    public static void LogErrorWithoutNewLine(string s, bool quiet)
+    public static void LogErrorWithoutNewLine(string s, bool quiet=false)
     {
+      if (s.Contains("thrown"))
+      {
+        return;
+      }
       if (!quiet)
       {
         Console.Error.Write(s);

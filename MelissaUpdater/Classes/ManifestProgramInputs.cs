@@ -53,7 +53,7 @@ namespace MelissaUpdater.Classes
       }
       catch (InvalidManifestNameException e)
       {
-        Console.WriteLine($"{e.Value} is not a valid product name");
+        Utilities.Log($"{e.Value} is not a valid product name", false);
         throw;
       }
     }
@@ -70,7 +70,7 @@ namespace MelissaUpdater.Classes
       }
       if (string.IsNullOrWhiteSpace(LicenseString))
       {
-        Console.WriteLine("License String cannot be empty. Check again or contact your sale representative for support.");
+        Utilities.Log("License String cannot be empty. Check again or contact your sale representative for support.", false);
         throw new Exception();
       }
     }
@@ -152,12 +152,12 @@ namespace MelissaUpdater.Classes
       // Check for conflict flags
       if (DryRun && Force)
       {
-        Utilities.LogError("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
+        Utilities.Log("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
         conflict = true;
       }
       else if (Quiet && Index)
       {
-        Utilities.LogError("Quiet Mode and Index Mode cannot be chosen at the same time. Please try again.", false);
+        Utilities.Log("Quiet Mode and Index Mode cannot be chosen at the same time. Please try again.", false);
         conflict = true;
       }
 

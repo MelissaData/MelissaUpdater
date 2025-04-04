@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace MelissaUpdater.Classes
 {
@@ -21,26 +22,34 @@ namespace MelissaUpdater.Classes
       destinationFilePath = path;
     }
 
-    public async Task StartDownload()
+    public async Task<string> StartDownload()
     {
+      var hash = String.Empty;
       httpClient = new HttpClient() { Timeout = TimeSpan.FromDays(1) };
 
       using (var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
-        await DownloadFileFromHttpResponseMessage(response);
+        hash = await DownloadFileFromHttpResponseMessage(response);
+
+      return hash;
     }
 
-    private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
+    private async Task<string> DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
     {
       response.EnsureSuccessStatusCode();
 
       var totalBytes = response.Content.Headers.ContentLength;
+      var hash = String.Empty;
 
       using (var contentStream = await response.Content.ReadAsStreamAsync())
-        await ProcessContentStream(totalBytes, contentStream);
+        hash = await ProcessContentStream(totalBytes, contentStream);
+
+      return hash;
     }
 
-    private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
+    private async Task<string> ProcessContentStream(long? totalDownloadSize, Stream contentStream)
     {
+      using SHA256 sha256 = SHA256.Create();
+
       var totalBytesRead = 0L;
       var readCount = 0L;
       var buffer = new byte[8192];
@@ -59,6 +68,7 @@ namespace MelissaUpdater.Classes
           }
 
           await fileStream.WriteAsync(buffer, 0, bytesRead);
+          sha256.TransformBlock(buffer, 0, bytesRead, buffer, 0);
 
           totalBytesRead += bytesRead;
           readCount += 1;
@@ -67,6 +77,12 @@ namespace MelissaUpdater.Classes
             TriggerProgressChanged(totalDownloadSize, totalBytesRead);
         }
         while (isMoreToRead);
+
+        sha256.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        // Here's the SHA-256 hash:
+        string hash = BitConverter.ToString(sha256.Hash).Replace("-", "");
+
+        return hash.ToLower();
       }
     }
 

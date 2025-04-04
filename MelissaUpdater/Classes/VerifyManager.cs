@@ -49,12 +49,12 @@ namespace MelissaUpdater.Classes
           }
           else if (!validHashFile)
           {
-            Console.WriteLine($"{Path.GetFileName(fileName)}: FAILED MISSING HASH FILE");
+            Utilities.Log($"{Path.GetFileName(fileName)}: FAILED MISSING HASH FILE", false);
             countFails++;
           }
           else
           {
-            Console.WriteLine($"{Path.GetFileName(fileName)}: FAILED");
+            Utilities.Log($"{Path.GetFileName(fileName)}: FAILED", false);
             countFails++;
           }
         }
@@ -72,19 +72,19 @@ namespace MelissaUpdater.Classes
         }
         else if (!validHashFile)
         {
-          Console.WriteLine($"{Path.GetFileName(Inputs.Path)}: FAILED MISSING HASH FILE");
+          Utilities.Log($"{Path.GetFileName(Inputs.Path)}: FAILED MISSING HASH FILE", false);
           countFails++;
         }
         else
         {
-          Console.WriteLine($"{Path.GetFileName(Inputs.Path)}: FAILED");
+          Utilities.Log($"{Path.GetFileName(Inputs.Path)}: FAILED", false);
           countFails++;
         }
       }
 
       if (countFails > 0)
       {
-        Console.WriteLine($"Melissa Updater: WARNING: {countFails} computed checksum did NOT match.", Inputs.Quiet);
+        Utilities.Log($"Melissa Updater: WARNING: {countFails} computed checksum did NOT match.", Inputs.Quiet);
       }
 
       return countFails;

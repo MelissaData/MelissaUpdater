@@ -54,7 +54,7 @@ namespace MelissaUpdater.Classes
     public async Task Download()
     {
       bool shouldContinue = true;
-      string hash = await GetHash();
+      SingleFile.SHA256 = await GetHash();
 
       string url = SingleFile.Type.ToUpper() switch
       {
@@ -66,7 +66,7 @@ namespace MelissaUpdater.Classes
       };
 
       //check if file name is valid 
-      if (hash.ToLower().Contains("invalid"))
+      if (SingleFile.SHA256.ToLower().Contains("invalid"))
       {
         shouldContinue = false;
         Utilities.Log($"{SingleFile.FileName} for {SingleFile.Release} is an invalid file!", Inputs.Quiet);
@@ -95,6 +95,7 @@ namespace MelissaUpdater.Classes
         }
 
         string filePath = Path.Combine(path, SingleFile.FilePath);
+        string hash = string.Empty;
 
         using (var client = new HttpClientDownloadWithProgress(url, filePath))
         {
@@ -102,12 +103,11 @@ namespace MelissaUpdater.Classes
           client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
             Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
           };
-          await client.StartDownload();
+          hash = await client.StartDownload();
         }
         Utilities.Log("", Inputs.Quiet);
 
-        SingleFile.SHA256 = await GetHash();
-        await Utilities.CreateOrUpdateHashFile(filePath, SingleFile.FileName, SingleFile.SHA256, Inputs.Quiet);
+        await Utilities.CreateOrUpdateHashFile(filePath, SingleFile.FileName, SingleFile.SHA256, hash, Inputs.Quiet);
         Utilities.Log("Finished downloading\n", Inputs.Quiet);
       }
       
@@ -125,7 +125,7 @@ namespace MelissaUpdater.Classes
       var response = client.GetAsync($"{url}", HttpCompletionOption.ResponseHeadersRead).Result;
       if (response.StatusCode != HttpStatusCode.OK)
       {
-        throw new InvalidResponseException(response.StatusCode, response.ReasonPhrase);
+        throw new InvalidResponseException(response);
       }
       return response.StatusCode == HttpStatusCode.OK;
     }
@@ -194,7 +194,7 @@ namespace MelissaUpdater.Classes
           }
           catch (Exception e)
           {
-            Console.WriteLine($"Unable to delete files: {e.Message}.\n");
+            Utilities.Log($"Unable to delete files: {e.Message}.\n", false);
           }
         }
       }
@@ -249,7 +249,7 @@ namespace MelissaUpdater.Classes
       }
       catch (Exception ex) 
       {
-        Console.WriteLine(ex.Message);
+        Utilities.Log(ex.Message, false);
       }
 
       Utilities.Log($"{SingleFile.FileName} for {SingleFile.Release} needs to be updated\n", Inputs.Quiet);
@@ -289,16 +289,16 @@ namespace MelissaUpdater.Classes
         }
         catch (IOException ex)
         {
-          Console.WriteLine(ex.Message);
+          Utilities.Log(ex.Message, false);
           if (attempts == 3)
           {
-            Console.WriteLine("Maximum number of attempts made.");
-            Console.WriteLine("Please close the associated file and restart this program.");
-            Console.WriteLine("This program will pick up where it left off.");
+            Utilities.Log("Maximum number of attempts made.", false);
+            Utilities.Log("Please close the associated file and restart this program.", false);
+            Utilities.Log("This program will pick up where it left off.", false);
           }
           else
           {
-            Console.WriteLine($"[{attempts}] Please close the file and press any key to proceed");
+            Utilities.Log($"[{attempts}] Please close the file and press any key to proceed", false);
             Console.ReadKey(false);
           }
         }
@@ -330,16 +330,16 @@ namespace MelissaUpdater.Classes
         }
         catch (IOException ex)
         {
-          Console.WriteLine(ex.Message);
+          Utilities.Log(ex.Message, false);
           if (attempts == 3)
           {
-            Console.WriteLine("Maximum number of attempts made.");
-            Console.WriteLine("Please close the associated file and restart this program.");
-            Console.WriteLine("This program will pick up where it left off.");
+            Utilities.Log("Maximum number of attempts made.", false);
+            Utilities.Log("Please close the associated file and restart this program.", false);
+            Utilities.Log("This program will pick up where it left off.", false);
           }
           else
           {
-            Console.WriteLine($"[{attempts}] Please close the file and press any key to proceed");
+            Utilities.Log($"[{attempts}] Please close the file and press any key to proceed", false);
             Console.ReadKey(false);
           }
         }
