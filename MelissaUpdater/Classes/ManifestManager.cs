@@ -307,10 +307,10 @@ namespace MelissaUpdater.Classes
             new ManifestMapRow
             {
               FileName = columns[0],
-              Type = columns[1],
-              OS = columns[2],
-              Compiler = columns[3],
-              Architecture = columns[4],
+              Type = columns[1].ToUpper() == "BINARY" ? "LIBRARY" : columns[1].ToUpper(),
+              OS = columns[2].ToUpper(),
+              Compiler = columns[3].ToUpper(),
+              Architecture = columns[4].ToUpper(),
               FilePath = columns[5]
             }
         );
@@ -318,35 +318,9 @@ namespace MelissaUpdater.Classes
 
       List<ManifestFile> joinedManifests;
 
-      if (ManifestFiles.Count > 0 && ManifestFiles[0].Type.ToUpper().Equals("DATA"))
-      {
-        joinedManifests = ManifestFiles.GroupJoin(
-          manifestMapRows, file => file.FileName, maprow => maprow.FileName,
-          (file, maprow) => new { manifestFile = file, mapRow = maprow }
-        )
-        .SelectMany(
-          file => file.mapRow.DefaultIfEmpty(),
-          (file, maprow) => new ManifestFile
-          {
-            Name = file.manifestFile.Name,
-            FileName = file.manifestFile.FileName,
-            Link = file.manifestFile.Link,
-            Type = file.manifestFile.Type,
-            OS = file.manifestFile.OS,
-            Compiler = file.manifestFile.Compiler,
-            Architecture = file.manifestFile.Architecture,
-            Release = file.manifestFile.Release,
-            SHA256 = file.manifestFile.SHA256,
-            FileSize = file.manifestFile.FileSize,
-            FilePath = maprow == null ? file.manifestFile.FilePath : maprow.FilePath
-          }
-        ).ToList();
-
-      }
-      else // Manifest group join for BINARY | INTERFACE
-      {
-        joinedManifests = ManifestFiles.GroupJoin(
-            manifestMapRows, file => new { file.FileName, file.Type, file.OS, file.Compiler, file.Architecture }, 
+      joinedManifests = ManifestFiles.GroupJoin(
+            manifestMapRows, 
+            file => new { file.FileName, file.Type, file.OS, file.Compiler, file.Architecture },
             maprow => new { maprow.FileName, maprow.Type, maprow.OS, maprow.Compiler, maprow.Architecture },
             (file, maprow) => new { manifestFile = file, mapRow = maprow }
           )
@@ -357,27 +331,37 @@ namespace MelissaUpdater.Classes
               Name = file.manifestFile.Name,
               FileName = file.manifestFile.FileName,
               Link = file.manifestFile.Link,
-              Type = maprow.Type,
-              OS = maprow.OS,
-              Compiler = maprow.Compiler,
-              Architecture = maprow.Architecture,
+              Type = file.manifestFile.Type,
+              OS = file.manifestFile.OS,
+              Compiler = file.manifestFile.Compiler,
+              Architecture = file.manifestFile.Architecture,
               Release = file.manifestFile.Release,
               SHA256 = file.manifestFile.SHA256,
               FileSize = file.manifestFile.FileSize,
-              FilePath = maprow == null ? "" : maprow.FilePath
+              FilePath = maprow == null ? file.manifestFile.FilePath : maprow.FilePath
             }
           ).ToList();
-      }
 
       ManifestFiles = joinedManifests;
-      for (int i = 0; i < ManifestFiles.Count; i++)
-      {
-          if (ManifestFiles[i].FilePath == null)
-          {
-              throw new InvalidArgumentException("invalidMap", mapPath);
-          }
-      }
 
+      // Display warning if any files were not on the map
+      // and set the default file path to the file name
+      List<ManifestFile> missingMapFiles = new List<ManifestFile>();
+      for (int i = 0;  i < ManifestFiles.Count; i++)
+      {
+        if (ManifestFiles[i].FilePath == null)
+        {
+          missingMapFiles.Add(ManifestFiles[i]);
+          ManifestFiles[i].FilePath = ManifestFiles[i].FileName;
+        }
+      }
+      if ( missingMapFiles.Count > 0 )
+      {
+        Utilities.Log("!Warning! The following files were not on the given map:\n", Inputs.Quiet);
+        DisplayManifestFilesTable(missingMapFiles);
+        Utilities.Log("Please add them to the map before proceeding.\n", Inputs.Quiet);
+        throw new InvalidManifestMapException("Incomplete map");
+      }
       Utilities.Log("Finished gathering filepath data \n", Inputs.Quiet);
     }
 
@@ -560,12 +544,12 @@ namespace MelissaUpdater.Classes
       Uri uri = new Uri(url);
       char[] charsToTrim = { '/', ' ' };
 
-      manifestFile.Type = uri.Segments[2].Trim(charsToTrim);
-      if (!manifestFile.Type.ToLower().Equals("data"))
+      manifestFile.Type = uri.Segments[2].Trim(charsToTrim).ToUpper();
+      if (!manifestFile.Type.Equals("DATA"))
       {
-        manifestFile.OS = uri.Segments[3].Trim(charsToTrim);
-        manifestFile.Compiler = uri.Segments[4].Trim(charsToTrim);
-        manifestFile.Architecture = uri.Segments[5].Trim(charsToTrim);
+        manifestFile.OS = uri.Segments[3].Trim(charsToTrim).ToUpper();
+        manifestFile.Compiler = uri.Segments[4].Trim(charsToTrim).ToUpper();
+        manifestFile.Architecture = uri.Segments[5].Trim(charsToTrim).ToUpper();
         manifestFile.Release = uri.Segments[6].Trim(charsToTrim);
         manifestFile.FileName = uri.Segments[7].Trim(charsToTrim);
       }
@@ -590,11 +574,7 @@ namespace MelissaUpdater.Classes
     /// </summary>
     public void ListManifestFiles()
     {
-      for (int i = ManifestFiles.Count - 1; i >= 0; i--)
-      {
-        Utilities.Log(ManifestFiles[i].FileName, Inputs.Quiet);
-      }
-      Utilities.Log("", Inputs.Quiet);
+      DisplayManifestFilesTable(ManifestFiles);
     }
 
     /// <summary>
@@ -608,6 +588,21 @@ namespace MelissaUpdater.Classes
         totalDownloadSize += Convert.ToInt64(ManifestFiles[i].FileSize);
       }
       Utilities.DisplayTotalFileSize(totalDownloadSize, Inputs.Quiet);
+    }
+
+    /// <summary>
+    /// Displays manifest files in a table format
+    /// </summary>
+    /// <param name="manifestFiles"></param>
+    private void DisplayManifestFilesTable(List<ManifestFile> manifestFiles)
+    {
+      Utilities.Log($"\n{"Filename",20} | {"Type",10} | {"OS",10} | {"Compiler",10} | {"Architecture",12}", Inputs.Quiet);
+      Utilities.Log(new string('-', 74), Inputs.Quiet);
+      foreach (var mapFile in manifestFiles)
+      {
+        Utilities.Log($"{mapFile.FileName,20} | {(mapFile.Type == "LIBRARY" ? "BINARY" : mapFile.Type),10} | {mapFile.OS,10} | {mapFile.Compiler,10} | {mapFile.Architecture,12}", Inputs.Quiet);
+      }
+      Utilities.Log($"\n(Total of {manifestFiles.Count} files)\n", Inputs.Quiet);
     }
 
   }

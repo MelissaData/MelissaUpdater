@@ -282,7 +282,7 @@ namespace MelissaUpdater
         }
         catch (Exception ex)
         {
-          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException))
+          if (ex is AggregateException && (ex.InnerException is InvalidArgumentException || ex.InnerException is InvalidResponseException || ex.InnerException is InvalidManifestMapException))
           {
             Utilities.LogError(ex.InnerException.Message, opts.Quiet);
           }

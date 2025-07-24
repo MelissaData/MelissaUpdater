@@ -26,7 +26,7 @@ This download link will get you a copy of the Melissa Updater to use on your mac
 - Windows: <https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe>
 - Linux: <https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/latest/MelissaUpdater>
 
-For .NET7 compatibility, download this [Windows](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/2025.04/MelissaUpdater.exe/?&TAG=NET7) or [Linux](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/2025.04/MelissaUpdater/?&TAG=NET7) version.
+For .NET7 compatibility, download this [Windows](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/2025.07/MelissaUpdater.exe/?&TAG=NET7) or [Linux](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/2025.07/MelissaUpdater/?&TAG=NET7) version.
 
 ----------------------------------------
 

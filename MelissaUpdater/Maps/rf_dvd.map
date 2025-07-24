@@ -37,7 +37,7 @@ mdRightFielder.lib|INTERFACE|WINDOWS|C|64BIT|windows/dll_64bit/mdRightFielder.li
 mdRightFielderJavaWrapper.dll|INTERFACE|WINDOWS|JAVA|32BIT|windows/interfaces/java/mdRightFielderJavaWrapper.dll
 mdRightFielderJavaWrapper.dll|INTERFACE|WINDOWS|JAVA|64BIT|windows/interfaces/java/x64/mdRightFielderJavaWrapper.dll
 RightFielderSQL.dll|INTERFACE|WINDOWS|MSSQL|ANY|windows/samples/SQLCLR/RightFielderSQL.dll
-mdRightFielder_cSharpCode.cs|INTERFACE|WINDOWS|NET|ANY|windows/interfaces/net/Source/mdRightFielder_cSharpCode.cs
+mdRightFielder_cSharpCode.cs|INTERFACE|ANY|NET|ANY|windows/interfaces/net/Source/mdRightFielder_cSharpCode.cs
 mdRightFielderNET.dll|INTERFACE|WINDOWS|NET|ANY|windows/interfaces/net/x64/mdRightFielderNET.dll
 mdRightFielderPerlWrapper.dll|INTERFACE|WINDOWS|PERL|32BIT|windows/interfaces/perl/mdRightFielderPerlWrapper.dll
 mdRightFielderPerlWrapper.dll|INTERFACE|WINDOWS|PERL|64BIT|windows/interfaces/perl/x64/mdRightFielderPerlWrapper.dll
