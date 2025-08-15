@@ -17,6 +17,8 @@ namespace MelissaUpdater.Classes
     public bool DryRun { get; set; }
     public bool Quiet { get; set; }
     public string Map { get; set; }
+    public bool GenerateMap { get; set; }
+    public string GenerateMapPath { get; set; }
 
     public string ProcessCallBack { get; set; }
 
@@ -36,6 +38,8 @@ namespace MelissaUpdater.Classes
 			SetQuiet(opts.Quiet);
       SetIndex(opts.Index);
       SetMap(opts.Map);
+      SetGenerateMap(opts.GenerateMap);
+      SetGenerateMapPath(opts.GenerateMap);
       SetProcessCallBack(opts.ProcessCallBack);
       CheckForConflictFlags();
     }
@@ -136,6 +140,31 @@ namespace MelissaUpdater.Classes
       if (!string.IsNullOrWhiteSpace(mapFromOpts))
       {
         Map = mapFromOpts;
+      }
+    }
+    void SetGenerateMap(string generateMap)
+    {
+      if (generateMap == null)
+      {
+        GenerateMap = false;
+      }
+      else
+      {
+        GenerateMap = true;
+      }
+    }
+    void SetGenerateMapPath(string generateMapPath)
+    {
+      GenerateMapPath = "";
+      if (!string.IsNullOrWhiteSpace(generateMapPath))
+      {
+        GenerateMapPath = generateMapPath;
+      }
+
+      // Append default filename if filename not specified
+      if (!Path.HasExtension(GenerateMapPath))
+      {
+        GenerateMapPath = Path.Combine(GenerateMapPath, $"{Product}.map");
       }
     }
 

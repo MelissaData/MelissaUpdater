@@ -14,6 +14,9 @@ namespace MelissaUpdater.Config
     [Option('f', "force", HelpText = "Force the download and overwrite existing file(s).")]
     public bool Force { get; set; }
 
+    [Option('g', "generate_map", HelpText = "Generate a map file for the manifest at the given path.")]
+    public string GenerateMap { get; set; }
+
     [Option('i', "index", HelpText = "Retrieve and list all files in a manifest.")]
     public bool Index { get; set; }
 

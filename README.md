@@ -26,7 +26,7 @@ This download link will get you a copy of the Melissa Updater to use on your mac
 - Windows: <https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe>
 - Linux: <https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/latest/MelissaUpdater>
 
-For .NET7 compatibility, download this [Windows](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/2025.07/MelissaUpdater.exe/?&TAG=NET7) or [Linux](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/2025.07/MelissaUpdater/?&TAG=NET7) version.
+For .NET7 compatibility, download this [Windows](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/2025.08/MelissaUpdater.exe/?&TAG=NET7) or [Linux](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/2025.08/MelissaUpdater/?&TAG=NET7) version.
 
 ----------------------------------------
 
@@ -73,18 +73,19 @@ Alternatively, you can view it in a browser: <https://releases.melissadata.net/B
 |Short   |Long                 |Description                    |
 |--------|---------------------|-------------------------------|
 |-d		 |--dry_run            |Simulate the process without modifying any files.|
-|-f	     |--force              |Force the download and overwrite existing file(s).                 		|
-|-i	     |--index              |Retrieve and list all files in a manifest.                 		|
+|-f	     |--force              |Force the download and overwrite existing file(s).|
+|-g	     |--generate_map       |Generate a map file of the manifest.|
+|-i	     |--index              |Retrieve and list all files in a manifest.|
 |-l		 |--license            |The valid Melissa license string for the product you wish to download. |
 |-m      |--map                |The map file with your custom file structure for downloaded file(s).|
-|-p      |--product            |The manifest name to be downloaded.          |
+|-p      |--product            |The manifest name to be downloaded.|
 |-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
-|-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
-|-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.       					|
-|-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
-|        |--help	           |Display the help screen.    	|
-|        |--version	           |Display version information.    	|
+|-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").|
+|-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory.|
+|-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.|
+|-x      |--callback           |Action command for the next script or process to run (Windows only).|
+|        |--help	           |Display the help screen.|
+|        |--version	           |Display version information.|
 
 ### Product
 
@@ -168,22 +169,26 @@ There are 2 ways to use Manifest option:
     ```
 
 * With Map directory: All files in the product will be downloaded into folder/subfolders based on the structure specified in .map files. You can pass in either absolute or relative map file path. Map files structure examples can be found in MelissaUpdater\Maps folder.
-	* Absolute path:
+    * Generate the Map directory:
+    ```
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -g "YOUR\PATH\TO\MAP\DIRECTORY\Melissa_product_name.map"
+    ```
+	* Download the manifest using the absolute path:
 	```
-    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\dq_phone_data.map"
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\Melissa_product_name.map"
     ```
 
-	* Relative path:
+	* Download the manifest using the relative path:
 	```
-    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m ".\Maps\dq_phone_data.map"
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m ".\Maps\Melissa_product_name.map"
     ```
 
     * Download to a working directory:
     ```
-    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\dq_phone_data.map" -w "\YOUR\PATH\TO\WORKING\DIRECTORY"
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m "C:\YOUR\PATH\TO\MAP\DIRECTORY\Maps\Melissa_product_name.map" -w "\YOUR\PATH\TO\WORKING\DIRECTORY"
     ```
     ```
-    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m ".\Maps\dq_phone_data.map" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
+    .\MelissaUpdater.exe manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "\YOUR\PATH\TO\TARGET\DIRECTORY\" -m ".\Maps\Melissa_product_name.map" -w "/YOUR/PATH/TO/WORKING/DIRECTORY"
     ```
 
 #### Product
@@ -264,6 +269,10 @@ There are 2 ways to use Manifest option:
     ```
 
 * With Map directory: All files in the product will be downloaded into folder/subfolders based on the structure specified in .map files. You can pass in either absolute or relative map file path. Map files structure examples can be found MelissaUpdater/Maps folder.
+    *  Generate the Map directory:
+    ```
+    ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -g "YOUR\PATH\TO\MAP\DIRECTORY/Melissa_product_name.map"
+    ```
 	* Absolute path:
 	```
     ./MelissaUpdater manifest -p "Melissa_product_name" -r "RELEASE_VERSION" -l "REPLACE_WITH_LICENSE_STRING" -t "/YOUR/PATH/TO/DIRECTORY" -m "/YOUR/PATH/TO/MAP/DIRECTORY/Maps/Melissa_product_name.map"

@@ -200,6 +200,22 @@ namespace MelissaUpdater
             }
           }
 
+          // Check if Generate Map is enabled, if so generate the map file without downloading
+          else if (manager.Inputs.GenerateMap)
+          {
+            Utilities.Log($"Generating map file for {manager.Inputs.Product} at {manager.Inputs.GenerateMapPath}", manager.Inputs.Quiet);
+            manager.GenerateMap();
+            Utilities.Log($"Finished generating map file\n", manager.Inputs.Quiet);
+
+
+            // Print warning message if Force or Dry Run is also enabled
+            if (manager.Inputs.Force || manager.Inputs.DryRun)
+            {
+              string conflictMode = manager.Inputs.Force ? "Force Mode" : "Dry Run Mode";
+              Utilities.LogError($"!Warning! Please perform {conflictMode} in a separate action.\n", false);
+            }
+          }
+
           // Check for Working Directory to download to a staging directory before moving to the Target Directory
           else if (!string.IsNullOrWhiteSpace(manager.Inputs.WorkingDirectory))
           {

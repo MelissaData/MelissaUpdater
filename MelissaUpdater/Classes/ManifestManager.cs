@@ -591,18 +591,79 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
+    /// Generates a map file for the manifest
+    /// </summary>
+    /// <param name="manifestFiles">Files to include in the map</param>
+    /// <param name="mapFilePath">Map file to write to - will overwrite contents if already exist</param>
+    public void GenerateMap()
+    {
+      // Create directory if not yet exist
+      FileInfo fileInfo = new FileInfo(Inputs.GenerateMapPath);
+      if (!fileInfo.Directory.Exists)
+      {
+        Directory.CreateDirectory(fileInfo.DirectoryName);
+      }
+      using (StreamWriter sw = new StreamWriter(Inputs.GenerateMapPath, false))
+      {
+        foreach (var mapFile in ManifestFiles)
+        {
+          sw.WriteLine($"{mapFile.FileName}|{(mapFile.Type == "LIBRARY" ? "BINARY" : mapFile.Type)}|{mapFile.OS}|{mapFile.Compiler}|{mapFile.Architecture}|{GenerateFilePath(mapFile)}");
+        }
+      }
+    }
+
+    /// <summary>
     /// Displays manifest files in a table format
     /// </summary>
     /// <param name="manifestFiles"></param>
     private void DisplayManifestFilesTable(List<ManifestFile> manifestFiles)
     {
-      Utilities.Log($"\n{"Filename",20} | {"Type",10} | {"OS",10} | {"Compiler",10} | {"Architecture",12}", Inputs.Quiet);
-      Utilities.Log(new string('-', 74), Inputs.Quiet);
+      int maxFilenameLen = GetMaxFilenameLength(manifestFiles);
+      Utilities.Log($"\n{"Filename".PadLeft(maxFilenameLen, ' ')} | {"Type",10} | {"OS",10} | {"Compiler",10} | {"Architecture",12}", Inputs.Quiet);
+      Utilities.Log(new string('-', 54 + maxFilenameLen), Inputs.Quiet);
       foreach (var mapFile in manifestFiles)
       {
-        Utilities.Log($"{mapFile.FileName,20} | {(mapFile.Type == "LIBRARY" ? "BINARY" : mapFile.Type),10} | {mapFile.OS,10} | {mapFile.Compiler,10} | {mapFile.Architecture,12}", Inputs.Quiet);
+        Utilities.Log($"{mapFile.FileName.PadLeft(maxFilenameLen, ' ')} | {(mapFile.Type == "LIBRARY" ? "BINARY" : mapFile.Type),10} | {mapFile.OS,10} | {mapFile.Compiler,10} | {mapFile.Architecture,12}", Inputs.Quiet);
       }
       Utilities.Log($"\n(Total of {manifestFiles.Count} files)\n", Inputs.Quiet);
+    }
+
+    private int GetMaxFilenameLength(List<ManifestFile> manifestFiles)
+    {
+      int max = 8;
+      foreach (var mapFile in manifestFiles)
+      {
+        if (mapFile.FileName.Length > max)
+        {
+          max = mapFile.FileName.Length;
+        }
+      }
+      return max;
+    }
+
+    /// <summary>
+    /// Returns a file path for a given manifest file, to be used in the map.
+    /// </summary>
+    /// <param name="manifestFile"></param>
+    /// <returns></returns>
+    private string GenerateFilePath(ManifestFile manifestFile)
+    {
+      string path;
+
+      if (manifestFile.Type == "DATA")
+      {
+        path = $"{Inputs.Product}/data/{manifestFile.FileName}";
+      }
+      else if (manifestFile.Type == "INTERFACE")
+      {
+        path = $"{Inputs.Product}/interfaces/{(manifestFile.OS == "ANY" ? "" : manifestFile.OS.ToLower() + "/")}{manifestFile.Compiler.ToLower()}/{(manifestFile.Architecture == "ANY" ? "" : manifestFile.Architecture.ToLower() + "/")}{manifestFile.FileName}";
+      }
+      else
+      {
+        path = $"{Inputs.Product}/{manifestFile.OS.ToLower()}/{manifestFile.Compiler.ToLower()}/{manifestFile.Architecture.ToLower()}/{manifestFile.FileName}";
+      }
+
+      return path;
     }
 
   }
