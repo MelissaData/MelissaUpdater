@@ -314,22 +314,28 @@ Download to a working directory:
 ----------------------------------------
 
 ## Update Schedule
-|Monthly |Bimonthly |Quarterly|
-|--------|----------|---------|
-|01	     |B6	    |Q1       |
-|02	     |B1	    |Q1       |
-|03	     |B1	    |Q1       |
-|04	     |B2	    |Q2       |
-|05	     |B2	    |Q2       |
-|06	     |B3	    |Q2       |
-|07	     |B3	    |Q3       |
-|08	     |B4	    |Q3       |
-|09	     |B4	    |Q3       |
-|10	     |B5	    |Q4       |
-|11	     |B5	    |Q4       |
-|12	     |B6	    |Q4       |
 
+|Month    |Monthly |Bimonthly |Quarterly|
+|---------|--------|----------|---------|
+|January  |01      |B6        |Q1       |
+|February |02      |B1        |Q1       |
+|March    |03      |B1        |Q1       |
+|April    |04      |B2        |Q2       |
+|May      |05      |B2        |Q2       |
+|June     |06      |B3        |Q2       |
+|July     |07      |B3        |Q3       |
+|August   |08      |B4        |Q3       |
+|September|09      |B4        |Q3       |
+|October  |10      |B5        |Q4       |
+|November |11      |B5        |Q4       |
+|December |12      |B6        |Q4       |
 
+You can use the current year combined with a value from either the **Monthly**, **Bimonthly**, or **Quarterly** column to get the release version you need.
 
+Here are some examples of release versions:
 
+- Monthly:   ` "2025.08" `
+- Bimonthly: ` "2025.B4" `
+- Quarterly: ` "2025.Q3" `
 
+For more details on release versions for each product, you may also refer to [Melissa Release Notes](https://releasenotes.melissa.com/).
