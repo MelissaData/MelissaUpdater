@@ -65,6 +65,12 @@ namespace MelissaUpdater.Classes
         _ => ""
       };
 
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
+
       //check if file name is valid 
       if (SingleFile.SHA256.ToLower().Contains("invalid"))
       {
@@ -363,6 +369,12 @@ namespace MelissaUpdater.Classes
         _ => ""
       };
 
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
+
       HttpResponseMessage response = await Client.GetAsync(url);
 
       return await response.Content.ReadAsStringAsync();
@@ -383,6 +395,12 @@ namespace MelissaUpdater.Classes
         "INTERFACE" => URLFormatter.FormatMetaInterfaceUrl(file, Inputs.LicenseString),
         _ => ""
       };
+
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
 
       HttpResponseMessage response = await Client.GetAsync(url);
       var responseString = await response.Content.ReadAsStringAsync();

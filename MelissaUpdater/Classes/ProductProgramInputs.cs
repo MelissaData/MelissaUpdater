@@ -16,6 +16,7 @@ namespace MelissaUpdater.Classes
     public bool DryRun { get; set; }
     public bool Quiet { get; set; }
     public string ProcessCallBack { get; set; }
+    public string Tag { get; set; }
 
     /// <summary>
     /// Set Product attributes from commandline parameters
@@ -30,8 +31,9 @@ namespace MelissaUpdater.Classes
       SetWorkingDirectory(opts.WorkingDirectory);
       SetForce(opts.Force);
       SetDryRun(opts.DryRun);
-	  SetQuiet(opts.Quiet);
+	    SetQuiet(opts.Quiet);
       SetProcessCallBack(opts.ProcessCallBack);
+      SetTag(opts.Tag);
       CheckForConflictFlags();
     }
 
@@ -124,6 +126,15 @@ namespace MelissaUpdater.Classes
       if (!string.IsNullOrEmpty(processCallBack))
       {
         ProcessCallBack = processCallBack;
+      }
+    }
+    void SetTag(string tagFromOpts)
+    {
+      Tag = "";
+      if (!string.IsNullOrWhiteSpace(tagFromOpts)
+          && string.IsNullOrWhiteSpace(Tag))
+      {
+        Tag = tagFromOpts;
       }
     }
     void CheckForConflictFlags()

@@ -322,5 +322,10 @@ namespace MelissaUpdater.Classes
       );
     }
 
+  public static string AddTagToUrl(string url, string tag)
+    {
+      return $"{url}&tag={tag}";
+    }
+
   }
 }

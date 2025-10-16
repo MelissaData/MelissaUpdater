@@ -55,6 +55,12 @@ namespace MelissaUpdater.Classes
 
       string url = URLFormatter.FormatProductDownloadUrl(ProductFile, Inputs.LicenseString);
 
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
+
       //check if file name is valid 
       if (ProductFile.SHA256.ToLower().Contains("invalid"))
       {
@@ -346,6 +352,12 @@ namespace MelissaUpdater.Classes
 
       string url = URLFormatter.FormatProductUrl(ProductFile, Inputs.LicenseString);
 
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
+
       HttpResponseMessage response = await Client.GetAsync(url);
 
       return await response.Content.ReadAsStringAsync();
@@ -359,6 +371,12 @@ namespace MelissaUpdater.Classes
     public async Task<ProductFileMetaData> GetMetaData(ProductFile file)
     {
       string url = URLFormatter.FormatMetaDataUrl(file, Inputs.LicenseString);
+
+      // add tag if given
+      if (!string.IsNullOrEmpty(Inputs.Tag))
+      {
+        url = URLFormatter.AddTagToUrl(url, Inputs.Tag);
+      }
 
       HttpResponseMessage response = await Client.GetAsync(url);
       var responseString = await response.Content.ReadAsStringAsync();

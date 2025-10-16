@@ -34,6 +34,9 @@ namespace MelissaUpdater.Config
 
     [Option('x', "callback", HelpText = "Action command for the next script or process to run.")]
     public string ProcessCallBack { get; set; }
+
+    [Option("tag", HelpText = "Select the product with a specific tag.")]
+    public string Tag { get; set; }
   }
 }
 

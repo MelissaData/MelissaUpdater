@@ -17,6 +17,7 @@ namespace MelissaUpdater.Classes
 
     public string TargetDirectory { get; set; }
     public string WorkingDirectory { get; set; }
+    public string Tag { get; set; }
     public bool Force { get; set; }
     public bool DryRun { get; set; }
     public bool Quiet { get; set; }
@@ -38,6 +39,7 @@ namespace MelissaUpdater.Classes
       SetArchitecture(opts.Architecture);
       SetTargetDirectory(opts.TargetDirectory);
       SetWorkingDirectory(opts.WorkingDirectory);
+      SetTag(opts.Tag);
       SetForce(opts.Force);
       SetDryRun(opts.DryRun);
       SetQuiet(opts.Quiet);
@@ -167,6 +169,16 @@ namespace MelissaUpdater.Classes
           && string.IsNullOrWhiteSpace(WorkingDirectory))
       {
         WorkingDirectory = workingDirectoryFromOpts;
+      }
+    }
+
+    void SetTag(string tagFromOpts)
+    {
+      Tag = "";
+      if (!string.IsNullOrWhiteSpace(tagFromOpts)
+          && string.IsNullOrWhiteSpace(Tag))
+      {
+        Tag = tagFromOpts;
       }
     }
 

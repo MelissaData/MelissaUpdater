@@ -60,6 +60,7 @@ For .NET7 compatibility, download this [Windows](https://releases.melissadata.ne
 |-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.        					|
 |-x     |--callback           |Action command for the next script or process to run (Windows only).    	|
 |-y     |--type	              |The specific file type to be downloaded (BINARY, DATA, INTERFACE).    	|
+|       |--tag	              |Select the file with a specific tag.    	|
 |       |--help	              |Display the help screen.    	|
 |       |--version	          |Display version information.    	|
 
@@ -100,6 +101,7 @@ Alternatively, you can view it in a browser: <https://releases.melissadata.net/B
 |-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
 |-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.       					|
 |-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
+|        |--tag	               |Select the product with a specific tag.    	|
 |        |--help	           |Display the help screen.    	|
 |        |--version	           |Display version information.    	|
 
