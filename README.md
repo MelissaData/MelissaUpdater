@@ -17,7 +17,7 @@ For more information on the Melissa Updater, please see: <https://docs.melissa.c
 
 ## Requirements
 - Windows: Windows 11 64-bit or newer
-- Linux: Ubuntu 22.04 LTS
+- Linux: Ubuntu 24.04 LTS
 - Dotnet Core SDK 8.0 or newer
 ----------------------------------------
 
