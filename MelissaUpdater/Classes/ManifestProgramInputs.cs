@@ -2,6 +2,7 @@
 using MelissaUpdater.Exceptions;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace MelissaUpdater.Classes
 {
@@ -22,6 +23,8 @@ namespace MelissaUpdater.Classes
 
     public string ProcessCallBack { get; set; }
 
+    public int JobsNumber { get; set; }
+
     /// <summary>
     /// Set Manifest attributes from commandline parameters
     /// </summary>
@@ -35,12 +38,13 @@ namespace MelissaUpdater.Classes
       SetWorkingDirectory(opts.WorkingDirectory);
       SetForce(opts.Force);
       SetDryRun(opts.DryRun);
-			SetQuiet(opts.Quiet);
+	  SetQuiet(opts.Quiet);
       SetIndex(opts.Index);
       SetMap(opts.Map);
       SetGenerateMap(opts.GenerateMap);
       SetGenerateMapPath(opts.GenerateMap);
       SetProcessCallBack(opts.ProcessCallBack);
+      SetJobsNumber(opts.JobsNumber);
       CheckForConflictFlags();
     }
 
@@ -124,7 +128,7 @@ namespace MelissaUpdater.Classes
       DryRun = dryrun;
 		}
 
-		void SetQuiet(bool quiet)
+	void SetQuiet(bool quiet)
     {
       Quiet = quiet;
     }
@@ -175,6 +179,11 @@ namespace MelissaUpdater.Classes
         ProcessCallBack = processCallBack;
       }
     }
+    void SetJobsNumber(int jobsNumber)
+    {
+      JobsNumber = jobsNumber;
+    }
+
     void CheckForConflictFlags()
     {
       bool conflict = false;

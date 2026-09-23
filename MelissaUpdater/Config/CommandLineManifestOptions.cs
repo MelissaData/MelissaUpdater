@@ -20,6 +20,9 @@ namespace MelissaUpdater.Config
     [Option('i', "index", HelpText = "Retrieve and list all files in a manifest.")]
     public bool Index { get; set; }
 
+    [Option('j', "jobs", HelpText = "Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.", Default = 0)]
+    public int JobsNumber { get; set; }
+
     [Option('l', "license", HelpText = "The valid Melissa license string for the product you wish to download.")]
     public string License { get; set; }
 

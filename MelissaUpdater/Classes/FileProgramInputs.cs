@@ -24,6 +24,8 @@ namespace MelissaUpdater.Classes
 
     public string ProcessCallBack { get; set; }
 
+    public int JobsNumber { get; set; }
+
     /// <summary>
     /// Set single file's attributes from commandline parameters
     /// </summary>
@@ -44,6 +46,7 @@ namespace MelissaUpdater.Classes
       SetDryRun(opts.DryRun);
       SetQuiet(opts.Quiet);
       SetProcessCallBack(opts.ProcessCallBack);
+      SetJobsNumber(opts.JobsNumber);
       CheckForConflictFlags();
     }
 
@@ -217,6 +220,11 @@ namespace MelissaUpdater.Classes
       {
         ProcessCallBack = processCallBack;
       }
+    }
+
+    void SetJobsNumber(int jobsNumber)
+    {
+      JobsNumber = jobsNumber;
     }
 
     void CheckForConflictFlags()

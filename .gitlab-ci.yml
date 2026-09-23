@@ -1,17 +1,65 @@
 stages:
   - build
-  
+  - sign
+  - checksum
+
 buildJob:
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:8.0
-  
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+
   script:
-    - dotnet publish  -f="net8.0" -r win-x64 /p:PublishSingleFile=true -c Release -o Artifacts MelissaUpdater/MelissaUpdater.csproj
+    - dotnet publish -f="net10.0" -r win-x64   /p:PublishSingleFile=true -c Release -o Artifacts/win-x64 MelissaUpdater/MelissaUpdater.csproj
+    - dotnet publish -f="net10.0" -r linux-x64 /p:PublishSingleFile=true -c Release -o Artifacts/linux-x64 MelissaUpdater/MelissaUpdater.csproj
 
   artifacts:
     paths:
       - Artifacts/
     expire_in: 1 week
-    
+
+  tags:
+    - docker-linux
+
+# Authenticode signing — PE/COFF only. The Linux ELF binary cannot be signed this way.
+windowsSignJob:
+  stage: sign
+  dependencies:
+    - buildJob
+
+  script:
+    - sign_sha256 Artifacts/win-x64/MelissaUpdater.exe
+
+  artifacts:
+    paths:
+      - Artifacts/win-x64/MelissaUpdater.exe
+
+  tags:
+    - windows-code-signer
+
+# SHA-256 checksums for both executables.
+# Runs in its own stage AFTER signing: Authenticode rewrites the .exe, so a
+# checksum taken before signing would not match the file users download.
+# Detects corrupted or truncated downloads. Publish SHA256SUMS over a channel
+# users already trust (HTTPS release page) — a checksum served from the same
+# place as the binary proves nothing against tampering.
+checksumJob:
+  stage: checksum
+  image: debian:stable-slim
+  dependencies:
+    - buildJob          # linux-x64 binary
+    - windowsSignJob    # signed win-x64 .exe, overwrites the unsigned copy
+
+  script:
+    # Each cd runs in a subshell so the working directory does not leak
+    # into the next command.
+    - (cd Artifacts/linux-x64 && sha256sum MelissaUpdater > SHA256SUMS && sha256sum -c SHA256SUMS && cat SHA256SUMS)
+    - (cd Artifacts/win-x64   && sha256sum MelissaUpdater.exe > SHA256SUMS && sha256sum -c SHA256SUMS && cat SHA256SUMS)
+
+  artifacts:
+    paths:
+      - Artifacts/linux-x64/MelissaUpdater
+      - Artifacts/linux-x64/SHA256SUMS
+      - Artifacts/win-x64/MelissaUpdater.exe
+      - Artifacts/win-x64/SHA256SUMS
+
   tags:
     - docker-linux

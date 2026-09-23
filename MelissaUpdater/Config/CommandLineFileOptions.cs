@@ -20,6 +20,9 @@ namespace MelissaUpdater.Config
     [Option('f', "force", HelpText = "Force the download and overwrite existing file(s).")]
     public bool Force { get; set; }
 
+    [Option('j', "jobs", HelpText = "Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.", Default = 0)]
+    public int JobsNumber { get; set; }
+
     [Option('l', "license", HelpText = "The valid Melissa license string for the product you wish to download.")]
     public string License { get; set; }
 
@@ -28,7 +31,7 @@ namespace MelissaUpdater.Config
 
     [Option('o', "os", HelpText = "The specific operating system for the binary file (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).")]
     public string OperatingSystem { get; set; }
-    
+
     [Option('q', "quiet", HelpText = "Run the program in quiet mode without console output except for errors.")]
     public bool Quiet { get; set; }
 

@@ -37,7 +37,7 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Create or update hash file(s) 
+    /// Create or update hash file(s)
     /// Check if hashes match
     /// </summary>
     /// <param name="file"></param>
@@ -48,6 +48,8 @@ namespace MelissaUpdater.Classes
     /// <returns></returns>
     public static async Task CreateOrUpdateHashFile(string file, string fileName, string SHA256, string hash, bool quiet)
     {
+      Log($"Start hash verification for {fileName}", quiet);
+
       Directory.CreateDirectory(Path.GetDirectoryName(file));
 
       using FileStream fs = new FileStream(file + ".hash", FileMode.OpenOrCreate, FileAccess.ReadWrite);
@@ -94,7 +96,7 @@ namespace MelissaUpdater.Classes
     }
 
     /// <summary>
-    /// Console log information of the current process 
+    /// Console log information of the current process
     /// </summary>
     /// <param name="s"></param>
     /// <param name="quiet"></param>

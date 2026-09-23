@@ -14,6 +14,9 @@ namespace MelissaUpdater.Config
     [Option('f', "force", HelpText = "Force the download and overwrite existing file(s).")]
     public bool Force { get; set; }
 
+    [Option('j', "jobs", HelpText = "Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.", Default = 0)]
+    public int JobsNumber { get; set; }
+
     [Option('l', "license", HelpText = "The valid Melissa license string for the product you wish to download.")]
     public string License { get; set; }
 

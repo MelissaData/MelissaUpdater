@@ -36,7 +36,7 @@ namespace MelissaUpdater.Classes
         OS = Inputs.OperatingSystem,
         Compiler = Inputs.Compiler,
         Architecture = Inputs.Architecture,
-        Type = Inputs.Type,
+        Type = Inputs.Type
       };
       SingleFileMetaData = GetMetaData(SingleFile).Result;
       SingleFile.SHA256 = SingleFileMetaData.SHA256;
@@ -103,14 +103,11 @@ namespace MelissaUpdater.Classes
         string filePath = Path.Combine(path, SingleFile.FilePath);
         string hash = string.Empty;
 
-        using (var client = new HttpClientDownloadWithProgress(url, filePath))
-        {
-          Utilities.Log($"Downloading {SingleFile.FileName} for {SingleFile.Release}", Inputs.Quiet);
-          client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => {
-            Utilities.DownloadProgressStatus(totalFileSize, totalBytesDownloaded, progressPercentage, Inputs.Quiet);
-          };
-          hash = await client.StartDownload();
-        }
+        var client = new DynamicParallelDownloader(url, filePath, Inputs.JobsNumber, Inputs.Quiet);
+        Utilities.Log($"Downloading {SingleFile.FileName} for {SingleFile.Release}", Inputs.Quiet);
+        client.OnProgress += (total, done) => Utilities.DownloadProgressStatus(total, done, Math.Round((double) done * 100 / total), Inputs.Quiet);
+        hash = await client.DownloadAsync();
+
         Utilities.Log("", Inputs.Quiet);
 
         await Utilities.CreateOrUpdateHashFile(filePath, SingleFile.FileName, SingleFile.SHA256, hash, Inputs.Quiet);

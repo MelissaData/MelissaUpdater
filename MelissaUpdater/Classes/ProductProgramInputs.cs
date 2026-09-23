@@ -17,6 +17,7 @@ namespace MelissaUpdater.Classes
     public bool Quiet { get; set; }
     public string ProcessCallBack { get; set; }
     public string Tag { get; set; }
+    public int JobsNumber { get; set; }
 
     /// <summary>
     /// Set Product attributes from commandline parameters
@@ -31,8 +32,9 @@ namespace MelissaUpdater.Classes
       SetWorkingDirectory(opts.WorkingDirectory);
       SetForce(opts.Force);
       SetDryRun(opts.DryRun);
-	    SetQuiet(opts.Quiet);
+      SetQuiet(opts.Quiet);
       SetProcessCallBack(opts.ProcessCallBack);
+      SetJobsNumber(opts.JobsNumber);
       SetTag(opts.Tag);
       CheckForConflictFlags();
     }
@@ -54,7 +56,7 @@ namespace MelissaUpdater.Classes
         throw;
       }
     }
-    
+
     void SetLicenseString(string licenseFromOpts)
     {
       if (!string.IsNullOrWhiteSpace(licenseFromOpts))
@@ -137,6 +139,11 @@ namespace MelissaUpdater.Classes
         Tag = tagFromOpts;
       }
     }
+    void SetJobsNumber(int jobsNumber)
+    {
+      JobsNumber = jobsNumber;
+    }
+
     void CheckForConflictFlags()
     {
       bool conflict = false;
@@ -147,7 +154,7 @@ namespace MelissaUpdater.Classes
         Utilities.Log("Force Mode and Dry Run Mode cannot be chosen at the same time. Please try again.", false);
         conflict = true;
       }
-	  
+
       if (conflict)
       {
         Utilities.Log("\nUnable to start program, please check above for details.", false);

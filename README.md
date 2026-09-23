@@ -22,12 +22,14 @@ For more information on the Melissa Updater, please see: <https://docs.melissa.c
 ----------------------------------------
 
 ## Getting Started
-This download link will get you a copy of the Melissa Updater to use on your machine. Download Melissa Updater here:
-- Windows: <https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe>
-- Linux: <https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/latest/MelissaUpdater>
+The download link below will get you a copy of the Melissa Updater to use on your machine.
 
-For .NET7 compatibility, download this [Windows](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/2025.10/MelissaUpdater.exe/?&TAG=NET7) or [Linux](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/2025.10/MelissaUpdater/?&TAG=NET7) version.
+Make sure to verify the SHA-256 hash value.
 
+|System     |Supported version|Hash value|
+|-----------|-----------------|----------|
+|Windows    |[.NET 10.0](https://releases.melissadata.net/Download/Library/WINDOWS/NET/ANY/latest/MelissaUpdater.exe)|<pre><code>EF7235A22B027F2E5711B602682397D253935889E0440687FFA786AF0E132C8F</code></pre>
+|Linux      |[.NET 10.0](https://releases.melissadata.net/Download/Library/LINUX/NET/ANY/latest/MelissaUpdater)|<pre><code>C5F64C9FA2AB250EFA44D6B32D6161894682968D67B4F3C5F559B171096DB41C</code></pre>
 ----------------------------------------
 
 ## Verbs
@@ -45,24 +47,25 @@ For .NET7 compatibility, download this [Windows](https://releases.melissadata.ne
 ## Parameters
 
 ### File
-|Short   |Long                 |Description                    |
-|--------|---------------------|-------------------------------|
-|-a		|--architecture       |The specific architecture for the binary file (64BIT, 32BIT, ANY).       |
-|-c		|--compiler           |The specific compiler for the binary file <br>(ACC3, ANY, C, COM, DLL, GCC32, GCC34, GCC41, GCC46, GCC48, GCC83,<br> JAVA, MSSQL, NET, PERL, PHP, PHP7, PLSQL, PYTHON, RUBY,<br> SSIS2005, SSIS2008, SSIS2012, SSIS2014, SSIS2016, SSIS2017, SSIS2019, WS12, WS6, XLC12, XLC6).   					|
-|-d		|--dry_run            |Simulate the process without modifying any files.                   	|
-|-f	    |--force              |Force the download and overwrite existing file(s).                 		|
-|-l		|--license            |The valid Melissa license string for the product you wish to download. |
-|-n		|--filename           |The filename to download.                                              |
-|-o		|--os                 |The specific operating system for the binary file<br> (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).            					|
+|Short  |Long                 |Description                    |
+|-------|---------------------|-------------------------------|
+|-a     |--architecture       |The specific architecture for the binary file (64BIT, 32BIT, ANY).|
+|-c     |--compiler           |The specific compiler for the binary file <br>(ACC3, ANY, C, COM, DLL, GCC32, GCC34, GCC41, GCC46, GCC48, GCC83,<br> JAVA, MSSQL, NET, PERL, PHP, PHP7, PLSQL, PYTHON, RUBY,<br> SSIS2005, SSIS2008, SSIS2012, SSIS2014, SSIS2016, SSIS2017, SSIS2019, WS12, WS6, XLC12, XLC6).|
+|-d     |--dry_run            |Simulate the process without modifying any files.|
+|-f     |--force              |Force the download and overwrite existing file(s).|
+|-j     |--jobs               |Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.|
+|-l     |--license            |The valid Melissa license string for the product you wish to download. |
+|-n     |--filename           |The filename to download.|
+|-o     |--os                 |The specific operating system for the binary file<br> (AIX, ANY, HPUX_IT, HPUX_PA, LINUX, SOLARIS, WINDOWS, ZLINUX).|
 |-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
-|-t     |--target_directory   |The target directory where to place the downloaded file(s).<br> If not specified, the default is the current directory. 					|
-|-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.        					|
-|-x     |--callback           |Action command for the next script or process to run (Windows only).    	|
-|-y     |--type	              |The specific file type to be downloaded (BINARY, DATA, INTERFACE).    	|
-|       |--tag	              |Select the file with a specific tag.    	|
-|       |--help	              |Display the help screen.    	|
-|       |--version	          |Display version information.    	|
+|-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").|
+|-t     |--target_directory   |The target directory where to place the downloaded file(s).<br> If not specified, the default is the current directory.|
+|-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.|
+|-x     |--callback           |Action command for the next script or process to run (Windows only).|
+|-y     |--type	              |The specific file type to be downloaded (BINARY, DATA, INTERFACE).|
+|       |--tag	              |Select the file with a specific tag.|
+|       |--help	              |Display the help screen.|
+|       |--version	          |Display version information.|
 
 
 ### Manifest
@@ -71,48 +74,50 @@ You can retrieve a list of available manifest names using the Melissa Releases A
 
 Alternatively, you can view it in a browser: <https://releases.melissadata.net/Browse>
 
-|Short   |Long                 |Description                    |
-|--------|---------------------|-------------------------------|
-|-d		 |--dry_run            |Simulate the process without modifying any files.|
-|-f	     |--force              |Force the download and overwrite existing file(s).|
-|-g	     |--generate_map       |Generate a map file of the manifest.|
-|-i	     |--index              |Retrieve and list all files in a manifest.|
-|-l		 |--license            |The valid Melissa license string for the product you wish to download. |
-|-m      |--map                |The map file with your custom file structure for downloaded file(s).|
-|-p      |--product            |The manifest name to be downloaded.|
-|-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").|
-|-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory.|
-|-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.|
-|-x      |--callback           |Action command for the next script or process to run (Windows only).|
-|        |--help	           |Display the help screen.|
-|        |--version	           |Display version information.|
+|Short  |Long                 |Description                    |
+|-------|---------------------|-------------------------------|
+|-d     |--dry_run            |Simulate the process without modifying any files.|
+|-f	    |--force              |Force the download and overwrite existing file(s).|
+|-g	    |--generate_map       |Generate a map file of the manifest.|
+|-i	    |--index              |Retrieve and list all files in a manifest.|
+|-j     |--jobs               |Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.|
+|-l     |--license            |The valid Melissa license string for the product you wish to download. |
+|-m     |--map                |The map file with your custom file structure for downloaded file(s).|
+|-p     |--product            |The manifest name to be downloaded.|
+|-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").|
+|-t     |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory.|
+|-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.|
+|-x     |--callback           |Action command for the next script or process to run (Windows only).|
+|       |--help	              |Display the help screen.|
+|       |--version	          |Display version information.|
 
 ### Product
 
-|Short   |Long                 |Description                    |
-|--------|---------------------|-------------------------------|
-|-d		 |--dry_run            |Simulate the process without modifying any files.|
-|-f	     |--force              |Force the download and overwrite existing file(s).                 		|
-|-l		 |--license            |The valid Melissa license string for the product you wish to download. |
-|-p      |--product            |The product name to be downloaded.          |
-|-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-r      |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").    		    |
-|-t      |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory. 					|
-|-w      |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.       					|
-|-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
-|        |--tag	               |Select the product with a specific tag.    	|
-|        |--help	           |Display the help screen.    	|
-|        |--version	           |Display version information.    	|
+|Short  |Long                 |Description                    |
+|-------|---------------------|-------------------------------|
+|-d     |--dry_run            |Simulate the process without modifying any files.|
+|-f     |--force              |Force the download and overwrite existing file(s).|
+|-j     |--jobs               |Number of parallel download jobs/threads (1–20). Default 0 selects automatically: 4 jobs for files larger than 100MB, otherwise a single stream.|
+|-l     |--license            |The valid Melissa license string for the product you wish to download.|
+|-p     |--product            |The product name to be downloaded.|
+|-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-r     |--release_version    |The release version (YYYY.MM, YYYY.Q#, LATEST) for the product you wish to download (e.g. "2023.01" or "2023.Q1" or "LATEST").|
+|-t     |--target_directory   |The target directory where to place the downloaded file(s). If not specified, the default is the current directory.|
+|-w     |--working_directory  |The working directory where to temporarily stage downloaded file(s) before moving into the target directory.|
+|-x     |--callback           |Action command for the next script or process to run (Windows only).|
+|       |--tag	              |Select the product with a specific tag.|
+|       |--help	              |Display the help screen.|
+|       |--version	          |Display version information.|
 
 ### Verify
-|Short   |Long                 |Description                    |
-|--------|---------------------|-------------------------------|
-|-p	     |--path               |The file or folder path that you wish to verify.                 		|
-|-q      |--quiet              |Run the program in quiet mode without console output except for errors.|
-|-x      |--callback           |Action command for the next script or process to run (Windows only).    	|
-|        |--help	           |Display the help screen.    	|
-|        |--version	           |Display version information.    	|
+|Short  |Long                 |Description                    |
+|-------|---------------------|-------------------------------|
+|-p	    |--path               |The file or folder path that you wish to verify.|
+|-q     |--quiet              |Run the program in quiet mode without console output except for errors.|
+|-x     |--callback           |Action command for the next script or process to run (Windows only).|
+|       |--help	              |Display the help screen.|
+|       |--version	          |Display version information.|
 ----------------------------------------
 
 ## Sample Commands
